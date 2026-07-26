@@ -9,7 +9,7 @@ services:
       - "7474:7474"  # Browser
       - "7687:7687"  # Bolt
     environment:
-      NEO4J_AUTH: neo4j/your-secure-password
+      NEO4J_AUTH: neo4j/Agentic2026SecurePass
       NEO4J_PLUGINS: '["apoc"]'
     volumes:
       - neo4j_data:/data
