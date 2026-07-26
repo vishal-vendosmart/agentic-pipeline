@@ -514,3 +514,66 @@ git add . && git commit -m "Update specs" && git push
 *Last updated: 2026-07-26*  
 *Version: 1.0*  
 *Next review: Week 4 (after MVP implementation)*
+
+---
+
+## 13. Glossary
+
+### Agent IDs
+
+| Agent ID | Short Name | Role |
+|----------|-----------|------|
+| `project-manager` | PM | Strategic orchestrator |
+| `researcher-vertical-a` | Researcher-A | ProQSmart keyword/trend discovery |
+| `writer-vertical-a` | Writer-A | ProQSmart content generation |
+| `designer-vertical-a` | Designer-A | ProQSmart UI/UX design |
+| `seo-vertical-a` | SEO-A | ProQSmart optimization |
+| `hermes-cms-sync` | Hermes CMS | Payload CMS integration |
+| `hermes-deploy` | Hermes Deploy | Coolify deployment |
+| `researcher-vertical-b` | Researcher-B | WeFab AI keyword/trend discovery (v2) |
+| `writer-vertical-b` | Writer-B | WeFab AI content generation (v2) |
+| `designer-vertical-b` | Designer-B | WeFab AI UI/UX design (v2) |
+| `seo-vertical-b` | SEO-B | WeFab AI optimization (v2) |
+
+### Acronyms
+
+| Acronym | Meaning |
+|---------|---------|
+| KG | Knowledge Graph |
+| CMS | Content Management System |
+| SEO | Search Engine Optimization |
+| SERP | Search Engine Results Page |
+| PM | Project Manager |
+| MVP | Minimum Viable Product |
+| API | Application Programming Interface |
+| SDK | Software Development Kit |
+
+### Task ID Format
+
+Linear task IDs follow the format `MAR-XXX` where:
+- `MAR` = Marketing team prefix
+- `XXX` = Sequential number (e.g., MAR-123, MAR-124)
+
+**MVP Task Sequence:**
+- MAR-123: Project (ProQSmart Content Q3 2026)
+- MAR-124: Keyword Research
+- MAR-125: Write 10 Articles
+- MAR-126: Design 5 Landing Pages
+- MAR-127: SEO Optimization
+- MAR-128: CMS Sync
+- MAR-129: Deploy to Production
+
+### Model Selection Rationale
+
+| Model | Parameters | Use Case | Rationale |
+|-------|-----------|----------|-----------|
+| `minimax-m3` | ~100B | Reasoning, planning, analysis | Strong reasoning for complex workflows |
+| `gemma4:31b` | 31B | Creative writing, content generation | Balanced creativity + fact-grounding |
+| `qwen2.5-coder:32b` | 32B | Code generation, technical tasks | Specialized for code output |
+
+---
+
+**Document End**
+
+*Last updated: 2026-07-26*  
+*Version: 1.0*

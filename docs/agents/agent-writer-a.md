@@ -531,7 +531,7 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=your-password
 
 # Zernio
-ZERNIO_API_KEY=sk_7570371f0bcc4041920101b9230a9f3fa4f1cfde3476a8bed71dec971c01d921
+ZERNIO_API_KEY=sk_xxx  # Replace with actual key in .env
 ZERNIO_BASE_URL=https://zernio.com/api/v1
 
 # OpenClaw

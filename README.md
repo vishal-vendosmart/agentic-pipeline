@@ -24,17 +24,21 @@ A fully automated pipeline that:
 - **[Agent Specs](docs/agents/)** — Detailed specs for each agent
   - [Project Manager](docs/agents/agent-pm.md)
   - [Researcher](docs/agents/agent-researcher-a.md)
-  - [Writer](docs/agents/agent-writer-a.md) (coming soon)
-  - [Designer](docs/agents/agent-designer-a.md) (coming soon)
-  - [SEO Specialist](docs/agents/agent-seo-a.md) (coming soon)
-  - [Hermes CMS](docs/agents/agent-hermes-cms.md) (coming soon)
-  - [Hermes Deploy](docs/agents/agent-hermes-deploy.md) (coming soon)
+  - [Writer](docs/agents/agent-writer-a.md)
+  - [Designer](docs/agents/agent-designer-a.md)
+  - [SEO Specialist](docs/agents/agent-seo-a.md)
+  - [Hermes CMS](docs/agents/agent-hermes-cms.md)
+  - [Hermes Deploy](docs/agents/agent-hermes-deploy.md)
 - **[Integration Specs](docs/integrations/)** — External system integrations
-  - [Linear](docs/integrations/integration-linear.md) (coming soon)
-  - [Neo4j](docs/integrations/integration-neo4j.md) (coming soon)
-  - [OpenDesign](docs/integrations/integration-opendesign.md) (coming soon)
-  - [Payload CMS](docs/integrations/integration-payload.md) (coming soon)
-  - [Coolify](docs/integrations/integration-coolify.md) (coming soon)
+  - [Linear](docs/integrations/integration-linear.md)
+  - [Neo4j](docs/integrations/integration-neo4j.md)
+  - [OpenDesign](docs/integrations/integration-opendesign.md)
+  - [Payload CMS](docs/integrations/integration-payload.md)
+  - [Coolify](docs/integrations/integration-coolify.md)
+  - [Gamma.app](docs/integrations/integration-gamma.md) (v2)
+  - [Zernio](docs/integrations/integration-zernio.md) (v2)
+  - [DataForSEO](docs/integrations/integration-dataforseo.md) (v2)
+  - [SerpAPI](docs/integrations/integration-serpapi.md) (v2)
 
 ---
 
@@ -98,11 +102,11 @@ npm test
 |-------|------|--------|
 | **Project Manager** | Your single interface, orchestrates all agents | ✅ Spec Complete |
 | **Researcher (A)** | Discovers keywords, trends, competitors for ProQSmart | ✅ Spec Complete |
-| **Writer (A)** | Generates SEO-optimized articles | 📝 In Progress |
-| **Designer (A)** | Creates React/Tailwind designs | 📝 In Progress |
-| **SEO (A)** | Optimizes content + technical SEO | 📝 In Progress |
-| **Hermes CMS** | Syncs content to Payload CMS | 📝 In Progress |
-| **Hermes Deploy** | Deploys to Coolify | 📝 In Progress |
+| **Writer (A)** | Generates SEO-optimized articles | ✅ Spec Complete |
+| **Designer (A)** | Creates React/Tailwind designs | ✅ Spec Complete |
+| **SEO (A)** | Optimizes content + technical SEO | ✅ Spec Complete |
+| **Hermes CMS** | Syncs content to Payload CMS | ✅ Spec Complete |
+| **Hermes Deploy** | Deploys to Coolify | ✅ Spec Complete |
 
 ---
 

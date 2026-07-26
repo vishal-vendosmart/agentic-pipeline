@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Neo4j - Knowledge Graph
+  neo4j:
+    image: neo4j:5.12
+    container_name: agentic-pipeline-neo4j
+    ports:
+      - "7474:7474"  # Browser
+      - "7687:7687"  # Bolt
+    environment:
+      NEO4J_AUTH: neo4j/your-secure-password
+      NEO4J_PLUGINS: '["apoc"]'
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
+  # OpenDesign - Design Generation
+  opendesign:
+    image: opendesign/opendesign:latest
+    container_name: agentic-pipeline-opendesign
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
+  # Payload CMS - Content Management
+  payload:
+    image: payloadcms/payload:latest
+    container_name: agentic-pipeline-payload
+    ports:
+      - "3001:3000"
+    environment:
+      PAYLOAD_SECRET: your-payload-secret
+      MONGODB_URL: mongodb://mongo:27017/payload
+    depends_on:
+      - mongo
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
+  # MongoDB - Payload CMS Database
+  mongo:
+    image: mongo:6
+    container_name: agentic-pipeline-mongo
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
+  # Coolify - Deployment Automation
+  coolify:
+    image: ghcr.io/coollabsio/coolify:latest
+    container_name: agentic-pipeline-coolify
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - coolify_data:/data
+    networks:
+      - agentic-network
+    restart: unless-stopped
+
+networks:
+  agentic-network:
+    driver: bridge
+
+volumes:
+  neo4j_data:
+  mongo_data:
+  coolify_data:

@@ -41,6 +41,7 @@ npm install @linear/sdk
 # .env
 LINEAR_API_KEY=lin_api_xxx
 LINEAR_TEAM_ID=MAR
+LINEAR_WEBHOOK_SECRET=whsec_xxx  # Generated when creating webhook (see §5)
 ```
 
 ---
@@ -464,6 +465,29 @@ try {
     logger.error('Linear API key invalid or expired');
     await notifyHuman('⚠️ Linear authentication failed');
   }
+}
+```
+
+### 8.3 Webhook Security
+
+**Best Practices:**
+1. **Always verify signature** - Use `LINEAR_WEBHOOK_SECRET` to validate requests
+2. **Use HTTPS** - Never expose webhook endpoint over HTTP
+3. **Rotate secrets** - Regenerate webhook secret every 90 days
+4. **Rate limit** - Limit webhook calls to prevent abuse
+5. **Log failures** - Track invalid signatures for security monitoring
+
+**Signature Verification:**
+```typescript
+const signature = req.headers['linear-signature'];
+const expectedSignature = crypto
+  .createHmac('sha256', process.env.LINEAR_WEBHOOK_SECRET)
+  .update(body)
+  .digest('hex');
+
+if (signature !== expectedSignature) {
+  logger.warn('Invalid webhook signature detected');
+  return res.status(401).send('Invalid signature');
 }
 ```
 
