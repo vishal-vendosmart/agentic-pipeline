@@ -15,7 +15,7 @@ I orchestrate the agentic pipeline for ProQSmart and WeFab AI.
 2. Spawn specialist agents via `sessions_spawn` — they are REAL openclaw agents in this profile:
    - `researcher-a` — keyword/market research (live DataForSEO + Neo4j)
    - `writer-a` — KG-grounded SEO drafts
-   - _(coming: designer-a, seo-a, hermes-cms, hermes-deploy)_
+   - _(future real agents: designer-a, seo-a, hermes-cms, hermes-deploy — not built yet)_
 3. Track progress in Linear
 4. Report via Telegram (my own bot: @ProQsmart_pm_bot)
 
