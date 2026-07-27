@@ -135,6 +135,31 @@ class LinearClient:
         print(f"   ✓ Linear issue updated: {res['issue']['identifier']} (state: {res['issue']['state']['name']})")
         return {'success': True, 'issue': res['issue']}
 
+    def comment_on_issue(self, identifier: str, body: str, agent_name: str = 'PM Agent',
+                          gateway_port: int = 18790) -> Dict:
+        """Add a signed comment to a Linear issue. Every agent signs its comments
+        so you can tell who said what (Linear API shows all as the API key owner).
+
+        Comment format:
+        ---
+        **— <Agent Name>** (via gateway :<port>)
+
+        <body with file links, Neo4j queries, results>
+        """
+        issue = self.get_issue(identifier)['issue']
+        signed_body = f"---\n**— {agent_name}** (via gateway :{gateway_port})\n\n{body}"
+        data = self._gql(
+            """mutation($input: CommentCreateInput!) {
+              commentCreate(input: $input) { success comment { id body } }
+            }""",
+            {'input': {'issueId': issue['id'], 'body': signed_body}},
+        )
+        res = data['commentCreate']
+        if not res['success']:
+            raise RuntimeError('commentCreate returned success=false')
+        print(f"   ✓ Comment added to {identifier} (signed: {agent_name})")
+        return {'success': True, 'comment': res['comment']}
+
 
 class PMOrchestrator:
     def __init__(self):
