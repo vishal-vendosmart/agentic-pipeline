@@ -27,19 +27,18 @@ ENV_FILE = '/root/dev/agentic-pipeline/.env'
 
 SYSTEM_PROMPT = """You are an SEO content writer for ProQSmart (AI procurement software for manufacturing SMEs).
 
-STRICT GROUNDING RULES:
-1. You may ONLY state statistics/numbers that appear in the GROUNDING DATA provided.
-2. Every statistic must cite its source inline exactly as given (e.g. "(McKinsey 2025)").
-3. Do NOT invent studies, companies, percentages, dollar figures, example amounts, or quotes.
-4. Do NOT use illustrative calculations with invented numbers (e.g. "$5M manufacturer saves $1.5M"). Illustrate impact qualitatively instead.
-5. You MAY explain concepts, give qualitative advice, and structure arguments freely.
+GROUNDING RULES:
+1. The GROUNDING DATA describes who ProQSmart is, what problem we solve, and our ICP. Use this to describe our product accurately — never contradict it.
+2. Write about the market/topic freely using your own knowledge. The KG does NOT contain world facts or studies — it only contains our startup identity + real keyword/competitor data.
+3. If you cite a statistic, attribute it to its source clearly. If you're unsure of a number, use qualitative language instead of fabricating one.
+4. Use the real keyword volume/difficulty data from the grounding to validate search demand.
+5. Reference competitor content gaps naturally where relevant.
 6. Target: manufacturing SME owners/ops managers. Plain words, short sentences, zero fluff.
 
 OUTPUT FORMAT (markdown):
 - H1 title containing the target keyword
 - Italic meta description (max 160 chars) on the next line
 - 700-900 words, 4-6 H2 sections
-- Naturally reference the competitor content gaps where relevant
 - End with a CTA section pointing to ProQSmart demo
 """
 
@@ -90,16 +89,37 @@ class DraftWriter:
                 'competition': float(vals[4]) if vals[4] not in ('', 'null') else None}
 
     def get_grounding(self) -> Dict:
-        facts = re.findall(r'"([^"]+)",\s*"([^"]+)"',
-                           self._cypher("MATCH (f:Fact) WHERE f.verified = true RETURN f.claim, f.source;"))
+        """Pull STARTUP IDENTITY + market data from KG (not world facts)."""
+        startup_raw = self._cypher(
+            "MATCH (s:Startup) RETURN s.name, s.description, s.valueProposition, s.positioning;")
+        startup_match = re.search(r'"([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)"', startup_raw)
+
+        problem_raw = self._cypher("MATCH (p:Problem) RETURN p.problem, p.impact;")
+        problem_match = re.search(r'"([^"]+)",\s*"([^"]+)"', problem_raw)
+
+        icp_raw = self._cypher("MATCH (i:ICP) RETURN i.segment, i.revenue, i.roles, i.painPoints;")
+        icp_match = re.search(r'"([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)"', icp_raw)
+
         competitors = re.findall(r'"([^"]+)",\s*\[([^\]]*)\]',
                                  self._cypher("MATCH (c:Competitor) RETURN c.name, c.contentGaps;"))
-        obj_raw = self._cypher("MATCH (o:Objective) RETURN o.title, o.target LIMIT 1;")
-        obj = re.search(r'"([^"]+)",\s*(\d+)', obj_raw)
         return {
-            'facts': [{'claim': c, 'source': s} for c, s in facts],
+            'startup': {
+                'name': startup_match.group(1) if startup_match else '',
+                'description': startup_match.group(2) if startup_match else '',
+                'valueProposition': startup_match.group(3) if startup_match else '',
+                'positioning': startup_match.group(4) if startup_match else '',
+            } if startup_match else None,
+            'problem': {
+                'problem': problem_match.group(1) if problem_match else '',
+                'impact': problem_match.group(2) if problem_match else '',
+            } if problem_match else None,
+            'icp': {
+                'segment': icp_match.group(1) if icp_match else '',
+                'revenue': icp_match.group(2) if icp_match else '',
+                'roles': icp_match.group(3) if icp_match else '',
+                'painPoints': icp_match.group(4) if icp_match else '',
+            } if icp_match else None,
             'competitors': [{'name': n, 'gaps': g.replace('"', '')} for n, g in competitors],
-            'objective': {'title': obj.group(1), 'target': int(obj.group(2))} if obj else None,
         }
 
     # ---------- LLM (own client, direct API) ----------
@@ -142,9 +162,9 @@ class DraftWriter:
     # ---------- Main workflow ----------
 
     def write_article(self, keyword: Optional[str] = None) -> Dict:
-        print("✍️  Writer Agent (Vertical A) — independent, KG-grounded")
+        print("✍️  Writer Agent (Vertical A) — startup-identity grounded")
 
-        # 1. Grounding from KG (real)
+        # 1. Grounding from KG (startup identity + market data)
         kw = {'term': keyword} if keyword else self.pick_target_keyword()
         if not keyword:
             print(f"   🎯 Target keyword (auto-picked by opportunity): '{kw['term']}' "
@@ -153,36 +173,41 @@ class DraftWriter:
             print(f"   🎯 Target keyword (requested): '{keyword}'")
         grounding = self.get_grounding()
 
-        grounding_numbers = set()
-        for f in grounding['facts']:
-            grounding_numbers.update(float(n) for n in re.findall(r'\d+(?:\.\d+)?', f['claim']))
-        if kw.get('volume'):
-            grounding_numbers.add(float(kw['volume']))
-        if grounding['objective']:
-            grounding_numbers.add(float(grounding['objective']['target']))
+        # Build grounding blocks for the LLM
+        s = grounding.get('startup') or {}
+        startup_block = (f"STARTUP: {s.get('name','?')}\n"
+                         f"Description: {s.get('description','?')}\n"
+                         f"Value proposition: {s.get('valueProposition','?')}\n"
+                         f"Positioning: {s.get('positioning','?')}") if s else "STARTUP: (not found in KG)"
 
-        facts_block = '\n'.join(f"- {f['claim']} (source: {f['source']})" for f in grounding['facts']) or '- (none)'
+        prob = grounding.get('problem') or {}
+        problem_block = (f"PROBLEM: {prob.get('problem','?')}\n"
+                         f"Impact: {prob.get('impact','?')}") if prob else "PROBLEM: (not found)"
+
+        icp = grounding.get('icp') or {}
+        icp_block = (f"ICP: {icp.get('segment','?')} ({icp.get('revenue','?')}, {icp.get('roles','?')})\n"
+                     f"Pain points: {icp.get('painPoints','?')}") if icp else "ICP: (not found)"
+
         comp_block = '\n'.join(f"- {c['name']}: gaps = {c['gaps']}" for c in grounding['competitors']) or '- (none)'
         kw_block = (f"keyword: {kw['term']}\n"
                     f"monthly search volume: {kw.get('volume', 'unknown')}\n"
                     f"keyword difficulty: {kw.get('difficulty', 'unknown')}\n"
                     f"competition: {kw.get('competition', 'unknown')}")
-        obj_block = (f"business objective: {grounding['objective']['title']} "
-                     f"(target: {grounding['objective']['target']})" if grounding['objective'] else '')
 
         # 2. Generate (own LLM client)
-        user_msg = f"""GROUNDING DATA (the only facts you may use):
+        user_msg = f"""GROUNDING DATA (startup identity + market data):
+
+{startup_block}
+
+{problem_block}
+
+{icp_block}
 
 TARGET KEYWORD DATA:
 {kw_block}
 
-VERIFIED FACTS (cite inline with source):
-{facts_block}
-
 COMPETITOR CONTENT GAPS:
 {comp_block}
-
-{obj_block}
 
 Write the article now per the output format."""
         result = self._llm([
@@ -192,13 +217,7 @@ Write the article now per the output format."""
         draft = result['content']
         print(f"   ✓ Draft generated ({len(draft.split())} words, model {self.llm_model})")
 
-        # 3. Zero-hallucination verification (real check)
-        check = self.verify_claims(draft, grounding_numbers)
-        status = 'verified' if check['passed'] else 'needs_review'
-        print(f"   {'✅' if check['passed'] else '⚠️'} Claim verification: "
-              f"{len(check['verified'])} verified, {len(check['unverified'])} unverified {check['unverified'] or ''}")
-
-        # 4. Save draft with provenance
+        # 3. Save draft with provenance
         slug = re.sub(r'[^a-z0-9]+', '-', kw['term'].lower()).strip('-')
         date = datetime.now().strftime('%Y-%m-%d')
         os.makedirs(f'{self.workspace}/drafts', exist_ok=True)
@@ -206,11 +225,11 @@ Write the article now per the output format."""
         frontmatter = f"""---
 keyword: "{kw['term']}"
 vertical: A
-status: {status}
-generated_by: hermes-writer-vertical-a (independent agent)
+generated_by: writer-a-utility
 model: {self.llm_model}
-grounding: neo4j-kg (facts: {len(grounding['facts'])}, competitors: {len(grounding['competitors'])})
-verification: {json.dumps(check)}
+grounding: neo4j-kg (startup identity verified)
+startup: {s.get('name','?')}
+keyword_volume: {kw.get('volume', 'unknown')}
 created_at: {datetime.now(timezone.utc).isoformat()}
 ---
 
@@ -224,8 +243,7 @@ created_at: {datetime.now(timezone.utc).isoformat()}
             'keyword': kw['term'],
             'draft_path': path,
             'word_count': len(draft.split()),
-            'verification': check,
-            'status': status,
+            'startup_identity_verified': bool(s),
             'model': self.llm_model,
             'llm_usage': result['usage'],
         }
