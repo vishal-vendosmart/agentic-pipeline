@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """
-Researcher Agent (Vertical A - ProQSmart)
-Role: Keyword/trend discovery + competitor analysis
-Tools: DataForSEO Labs API (LIVE), Neo4j KG
+Researcher utility (Vertical A - ProQSmart) — NOT an agent.
+Purpose: deterministic keyword/trend discovery helper.
+Calls DataForSEO Labs (LIVE) + writes Neo4j KG + saves keyword-strategy.json.
+
+This is a UTILITY exec'd by the real openclaw agent `researcher-a` (or by PM
+for batch runs). It has no identity, memory, or agency. The agent is the
+real openclaw agent; this script is its tool.
+
 Policy: REAL DATA ONLY. No mock/simulated output. Fails loudly on API errors.
 """
 
@@ -30,7 +35,7 @@ def load_env():
                     os.environ.setdefault(k, v)
 
 
-class ResearcherAgent:
+class ResearchTool:
     def __init__(self):
         load_env()
         self.dfs_auth = (
@@ -168,6 +173,6 @@ RETURN k.term
 
 
 if __name__ == '__main__':
-    agent = ResearcherAgent()
+    agent = ResearchTool()
     result = agent.research_keywords(['AI procurement software', 'manufacturing automation'])
     print(json.dumps(result, indent=2))

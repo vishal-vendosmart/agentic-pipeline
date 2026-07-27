@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Writer Agent (Vertical A - ProQSmart)
-Role: Generate SEO article drafts grounded in Neo4j Knowledge Graph facts.
+Writer utility (Vertical A - ProQSmart) — NOT an agent.
+Purpose: deterministic SEO draft generator grounded in Neo4j KG facts.
+Calls ollama-cloud directly + self-verifies claims against KG numbers + saves draft.
 
-INDEPENDENCE: Standalone agent. Own LLM client (direct ollama-cloud HTTP).
-Does NOT use/spawn/delegate to any other agent (no Milo 'writer', no
-sessions_spawn). Handoffs only via KG + files + Linear.
+This is a UTILITY exec'd by the real openclaw agent `writer-a` (or by PM for
+batch runs). It has no identity, memory, or agency. The agent is the real
+openclaw agent; this script is its tool.
 
 POLICY: REAL DATA ONLY. Every statistic in the draft must trace to a KG
 Fact/Keyword/Objective node. Unverified claims are flagged, never silently
@@ -53,7 +54,7 @@ def load_env():
                     os.environ.setdefault(k, v)
 
 
-class WriterAgent:
+class DraftWriter:
     def __init__(self):
         load_env()
         self.neo4j_user = os.getenv('NEO4J_USER', 'neo4j')
@@ -231,6 +232,6 @@ created_at: {datetime.now(timezone.utc).isoformat()}
 
 
 if __name__ == '__main__':
-    agent = WriterAgent()
+    agent = DraftWriter()
     kw = sys.argv[1] if len(sys.argv) > 1 else None
     print(json.dumps(agent.write_article(kw), indent=2, default=str))

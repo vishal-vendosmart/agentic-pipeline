@@ -1,7 +1,7 @@
 {
   "name": "researcher-vertical-a",
   "description": "Keyword research and competitor analysis for ProQSmart (Vertical A)",
-  "entry_point": "/root/dev/agentic-pipeline/utilities/researcher-vertical-a/agent.py",
+  "entry_point": "/root/dev/agentic-pipeline/utilities/researcher-a/research.py",
   "runtime": "python3",
   "workspace": "/root/.openclaw-pm/workspace-vertical-a",
   "tools_required": ["exec", "read", "write"],

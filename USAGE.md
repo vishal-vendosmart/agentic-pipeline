@@ -31,7 +31,7 @@ Start an OpenClaw session with the PM agent:
 
 # In your OpenClaw session, you can:
 1. Create Linear projects
-2. Spawn researcher: exec python3 /root/.openclaw-pm/hermes-agents/researcher-vertical-a/agent.py
+2. Spawn researcher: exec python3 /root/.openclaw-pm/hermes-agents/researcher-a/research.py
 3. Track progress in Linear
 ```
 

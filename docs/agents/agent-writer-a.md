@@ -5,7 +5,7 @@
 > registered in `/root/.openclaw-pm/openclaw.json` (`agents.list`), own workspace
 > (`/root/.openclaw-pm/workspace-writer-a`), own agentDir
 > (`/root/.openclaw-pm/agents/writer-a/agent/`). PM spawns it via
-> `sessions_spawn`. The deterministic Python helper in `utilities/researcher-vertical-a/`
+> `sessions_spawn`. The deterministic Python helper in `utilities/researcher-a/`
 > is an exec utility it may call — it is NOT the agent itself.
 > See architecture-spec.md §6.4 (Agent Installation Standard).
 **ID:** `writer-a`  

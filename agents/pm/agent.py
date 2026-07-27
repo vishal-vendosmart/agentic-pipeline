@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """
-Project Manager Agent - OpenClaw Integration
-Role: Strategic orchestrator for agentic pipeline
-Integration: Real Linear GraphQL API + spawns Hermes agents via exec
+PM orchestration CLI/utility — NOT the agent itself.
+The real PM agent is the openclaw agent `pm-agent` (profile `pm`).
+This script is a deterministic helper: real Linear GraphQL API calls +
+spawns the researcher/writer UTILITIES (not agents) via exec for batch runs.
+The openclaw pm-agent orchestrates live agents via sessions_spawn; this
+script is its CLI/batch counterpart.
 """
 
 import os
@@ -133,7 +136,7 @@ class LinearClient:
         return {'success': True, 'issue': res['issue']}
 
 
-class ProjectManagerAgent:
+class PMOrchestrator:
     def __init__(self):
         self.linear = LinearClient()
         self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm')
@@ -145,7 +148,7 @@ class ProjectManagerAgent:
         print(f"🔍 Spawning Researcher agent for Vertical {vertical}")
         print(f"   Seed keywords: {seed_keywords}")
 
-        agent_script = f'{self.hermes_agents_dir}/researcher-vertical-a/agent.py'
+        agent_script = f'{self.hermes_agents_dir}/researcher-a/research.py'
 
         result = subprocess.run(
             ['python3', agent_script],
@@ -154,14 +157,14 @@ class ProjectManagerAgent:
             env={**os.environ, 'VERTICAL': vertical}
         )
 
-        return self._parse_agent_output(result, f'researcher-vertical-{vertical.lower()}')
+        return self._parse_agent_output(result, f'researcher-a-utility')
 
     def spawn_writer(self, keyword: Optional[str] = None, vertical: str = 'A') -> Dict:
         """Spawn Writer Hermes agent via exec (real subprocess, independent agent)"""
 
         print(f"✍️  Spawning Writer agent for Vertical {vertical}")
 
-        agent_script = f'{self.hermes_agents_dir}/writer-vertical-a/agent.py'
+        agent_script = f'{self.hermes_agents_dir}/writer-a/write_draft.py'
         cmd = ['python3', agent_script] + ([keyword] if keyword else [])
 
         result = subprocess.run(
@@ -171,7 +174,7 @@ class ProjectManagerAgent:
             env={**os.environ, 'VERTICAL': vertical}
         )
 
-        return self._parse_agent_output(result, f'writer-vertical-{vertical.lower()}')
+        return self._parse_agent_output(result, f'writer-a-utility')
 
     @staticmethod
     def _parse_agent_output(result, agent_name: str) -> Dict:
@@ -233,7 +236,7 @@ class ProjectManagerAgent:
 
 
 if __name__ == '__main__':
-    pm = ProjectManagerAgent()
+    pm = PMOrchestrator()
     result = pm.run_content_pipeline(
         objective="Generate 20 leads/month from manufacturing SMEs",
         seed_keywords=['AI procurement software', 'manufacturing automation']
