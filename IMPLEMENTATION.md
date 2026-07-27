@@ -115,6 +115,45 @@
 | 2026-07-26 | MVP stall is predictable | Process: Time-box + v2 tasks early |
 | 2026-07-26 | Neo4j password before first start | Infra: Set auth in docker-compose |
 | 2026-07-26 | Constraints need indexes dropped first | Neo4j: Drop before create |
+| 2026-07-27 | **Agent Independence Rule** (user directive): every new agent is a standalone entity — own script, workspace, config, LLM client. NEVER built on or delegating to an existing agent (no Milo writer, no sessions_spawn into another gateway). Handoffs only via KG + files + Linear. | Architecture: applies to Writer-A, Designer-A, SEO-A, Hermes, all -B variants |
+| 2026-07-27 | No simulated outputs/answers (user directive) | Data: mock fallbacks removed everywhere, loud failure instead |
+
+---
+
+### 2026-07-27 — Saturday (Day 2, cont.) — WRITER AGENT (Week 3, ahead of schedule)
+
+**Session Type:** Week 3 implementation under Agent Independence Rule
+
+**What Happened:**
+- ✅ Built `hermes-agents/writer-vertical-a/` — fully independent standalone agent
+  (own LLM client via direct ollama-cloud HTTP; does NOT use Milo's writer,
+  no sessions_spawn, handoffs via KG + files only)
+- ✅ KG grounding: auto-picks best-opportunity live keyword, pulls verified
+  Facts + Competitors + Objective from Neo4j (fixed plain-format regex parsing)
+- ✅ Zero-hallucination verification: every statistic-like number in the draft
+  checked against KG grounding; years + structural numbers exempt; unverified
+  claims flagged (caught a real invented "$250k" + illustrative math during dev)
+- ✅ First REAL draft: `drafts/2026-07-27-automation-in-manufacturing-industry.md`
+  (757 words, status **verified**, claims [15%, 30%] traced to Deloitte/McKinsey
+  facts, competitor gaps woven in)
+- ✅ PM wiring: `spawn_writer()` + robust nested-JSON agent-output parser
+- ✅ MAR-256 (Writer agent task) created → closed with real results via LinearClient
+- ✅ Fixed workspace env collision (OPENCLAW_WORKSPACE → VERTICAL_A_WORKSPACE)
+  affecting both hermes agents' output paths
+
+**Decisions Made:**
+1. Writer = independent hermes script (rule codified above)
+2. Derived/illustrative numbers count as unverified (conservative zero-hallucination)
+3. Verification statuses: verified / needs_review — human reviews flagged claims
+
+**Metrics:**
+- Drafts: 1 verified (757 words) | LLM: minimax-m3 direct, ~3.4k tokens/draft, $0
+- Linear: MAR-256 Done | Agents live: PM, Researcher-A, Writer-A
+
+**TODO Next (Week 3 remaining):**
+- [ ] 2 more article drafts (goal: 3)
+- [ ] Zernio social posting integration
+- [ ] Neo4j Article node + VERIFIES relationships (schema per integration-neo4j.md)
 
 ---
 

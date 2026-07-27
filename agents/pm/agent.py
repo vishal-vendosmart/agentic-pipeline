@@ -8,7 +8,6 @@ Integration: Real Linear GraphQL API + spawns Hermes agents via exec
 import os
 import json
 import subprocess
-import re
 import requests
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -155,15 +154,35 @@ class ProjectManagerAgent:
             env={**os.environ, 'VERTICAL': vertical}
         )
 
-        # Extract JSON from output (last JSON object)
+        return self._parse_agent_output(result, f'researcher-vertical-{vertical.lower()}')
+
+    def spawn_writer(self, keyword: Optional[str] = None, vertical: str = 'A') -> Dict:
+        """Spawn Writer Hermes agent via exec (real subprocess, independent agent)"""
+
+        print(f"✍️  Spawning Writer agent for Vertical {vertical}")
+
+        agent_script = f'{self.hermes_agents_dir}/writer-vertical-a/agent.py'
+        cmd = ['python3', agent_script] + ([keyword] if keyword else [])
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            env={**os.environ, 'VERTICAL': vertical}
+        )
+
+        return self._parse_agent_output(result, f'writer-vertical-{vertical.lower()}')
+
+    @staticmethod
+    def _parse_agent_output(result, agent_name: str) -> Dict:
+        """Extract trailing JSON object from agent stdout (supports nested JSON)."""
         try:
-            json_match = re.search(r'\{[^{}]*\}', result.stdout, re.DOTALL)
-            if json_match:
-                output = json.loads(json_match.group())
-                print(f"   ✓ Researcher completed: {output.get('total_keywords', 0)} keywords")
-                return {'success': True, 'agent': f'researcher-vertical-{vertical.lower()}', 'result': output}
-            else:
-                raise ValueError("No JSON found in output")
+            stdout = result.stdout
+            start = stdout.rfind('\n{')
+            candidate = stdout[start + 1:] if start != -1 else stdout
+            output = json.loads(candidate)
+            print(f"   ✓ {agent_name} completed: {output.get('total_keywords', output.get('keyword', 'done'))}")
+            return {'success': True, 'agent': agent_name, 'result': output}
         except Exception as e:
             print(f"   ⚠ Parse error: {e}")
             print(f"   stdout: {result.stdout[:200]}")

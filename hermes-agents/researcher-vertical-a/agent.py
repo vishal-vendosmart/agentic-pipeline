@@ -39,7 +39,7 @@ class ResearcherAgent:
         )
         self.neo4j_user = os.getenv('NEO4J_USER', 'neo4j')
         self.neo4j_password = os.environ['NEO4J_PASSWORD']
-        self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm/workspace-vertical-a')
+        self.workspace = os.getenv('VERTICAL_A_WORKSPACE', '/root/.openclaw-pm/workspace-vertical-a')
         self.total_cost = 0.0
 
     def _dfs_post(self, endpoint: str, payload: List[Dict]) -> Dict:
