@@ -1,0 +1,33 @@
+{
+  "source": "dataforseo_labs_live",
+  "fetched_at": "2026-07-27T13:55:52.592520+00:00",
+  "seed_keywords": [
+    "AI procurement software"
+  ],
+  "api_cost_usd": 0.02472,
+  "keywords": [
+    {
+      "keyword": "ai procurement software",
+      "search_volume": 170,
+      "cpc": 22.8,
+      "competition": 0.23
+    },
+    {
+      "keyword": "ai powered procurement software",
+      "search_volume": 90,
+      "cpc": 54.44,
+      "competition": 0.08
+    },
+    {
+      "keyword": "procurement ai software",
+      "search_volume": 40,
+      "cpc": 29.34,
+      "competition": 0.38
+    }
+  ],
+  "difficulty": {
+    "ai powered procurement software": 11,
+    "ai procurement software": 16,
+    "procurement ai software": 11
+  }
+}
