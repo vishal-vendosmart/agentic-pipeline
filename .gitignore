@@ -64,3 +64,4 @@ hermes-agents/*/__pycache__/
 *.pem
 *.key
 secrets/
+workspace-*/.openclaw/

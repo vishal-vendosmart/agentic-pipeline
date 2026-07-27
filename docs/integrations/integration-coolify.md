@@ -56,7 +56,7 @@ http://localhost:8000/api/webhooks/deploy/{project-id}/{environment-id}
 ```python
 #!/usr/bin/env python3
 """
-Hermes Agent: Coolify Deployment Trigger
+Real OpenClaw Agent (future): Coolify Deployment Trigger
 Triggers deployment via Coolify webhooks and verifies success
 """
 

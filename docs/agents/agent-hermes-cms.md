@@ -4,7 +4,7 @@
 **Role:** Payload CMS Integration  
 **Vertical:** Both (ProQSmart + WeFab AI)  
 **Runtime:** Python 3.11  
-**Type:** Hermes Agent (Python script)  
+**Type:** Real OpenClaw Agent (future — not yet built)  
 
 ---
 
@@ -24,7 +24,7 @@ Sync approved content from workspace to Payload CMS. Handles authentication, con
 ```json
 {
   "command": "python",
-  "args": ["/root/.openclaw-pm/hermes-agents/cms-sync/agent.py"],
+  "args": ["/root/dev/agentic-pipeline/utilities/cms-sync/agent.py"],
   "env": {
     "FILEPATH": "/root/.openclaw-pm/workspace-seo-a/optimized/2026-07-26-ai-procurement.md",
     "VERTICAL": "A"
@@ -101,7 +101,7 @@ mutation {
 ```python
 #!/usr/bin/env python3
 """
-Hermes Agent: Payload CMS Content Sync
+Real OpenClaw Agent (future): Payload CMS Content Sync
 """
 
 import requests

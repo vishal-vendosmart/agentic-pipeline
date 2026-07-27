@@ -68,6 +68,6 @@ openclaw agents list
 - **Agent dir:** `/root/.openclaw-pm/agents/pm-agent/agent` (system.md, IDENTITY.md)
 - **Config:** `/root/.openclaw-pm/openclaw.json`
 - **Model:** `ollama-cloud/minimax-m3` (fallback: `deepseek-v4-pro`)
-- **Hermes agents:** `/root/dev/agentic-pipeline/hermes-agents/` (researcher-vertical-a installed; writer/designer/seo TODO)
+- **Hermes agents:** `/root/dev/agentic-pipeline/utilities/` (researcher-a installed; writer/designer/seo TODO)
 - **Research output:** `/root/dev/agentic-pipeline/workspace-vertical-a/`
 - **Data:** Neo4j container `agentic-pipeline-neo4j` (localhost:7474/:7687)

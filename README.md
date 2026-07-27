@@ -1,215 +1,118 @@
 # Agentic Pipeline — AI Content Generation System
 
-**Automated SEO content generation and website management for ProQSmart and WeFab AI**
+**Automated SEO content generation for ProQSmart and WeFab AI**
 
 ---
 
-## 🎯 What This Is
+## What This Is
 
-A fully automated pipeline that:
-- Generates SEO-optimized blog posts and landing pages
-- Manages content in Payload CMS
-- Deploys to production via Coolify
-- Tracks all work in Linear
-- Prevents hallucinations via Neo4j Knowledge Graph
+A pipeline of independent OpenClaw agents that:
+- Researches real keywords via live DataForSEO API
+- Writes SEO articles grounded in domain knowledge
+- Tracks all work in Linear (task bus + audit trail)
+- Stores project truth in Neo4j (startup identity, market data, transactions)
+- Deploys content to production (future: Payload CMS + Coolify)
 
-**Result:** 10+ articles/month with <2 hours/week of human time
-
----
-
-## 📚 Documentation
-
-### Specifications
-- **[Architecture Spec](docs/architecture-spec.md)** — System overview, agent roster, data flow
-- **[Agent Specs](docs/agents/)** — Detailed specs for each agent
-  - [Project Manager](docs/agents/agent-pm.md)
-  - [Researcher](docs/agents/agent-researcher-a.md)
-  - [Writer](docs/agents/agent-writer-a.md)
-  - [Designer](docs/agents/agent-designer-a.md)
-  - [SEO Specialist](docs/agents/agent-seo-a.md)
-  - [Hermes CMS](docs/agents/agent-hermes-cms.md)
-  - [Hermes Deploy](docs/agents/agent-hermes-deploy.md)
-- **[Integration Specs](docs/integrations/)** — External system integrations
-  - [Linear](docs/integrations/integration-linear.md)
-  - [Neo4j](docs/integrations/integration-neo4j.md)
-  - [OpenDesign](docs/integrations/integration-opendesign.md)
-  - [Payload CMS](docs/integrations/integration-payload.md)
-  - [Coolify](docs/integrations/integration-coolify.md)
-  - [Gamma.app](docs/integrations/integration-gamma.md) (v2)
-  - [Zernio](docs/integrations/integration-zernio.md) (v2)
-  - [DataForSEO](docs/integrations/integration-dataforseo.md) (v2)
-  - [SerpAPI](docs/integrations/integration-serpapi.md) (v2)
+**Target:** 10+ articles/month with <2 hours/week of human time, <$50/month cost
 
 ---
 
-## 🚀 Quick Start
+## Agent Status
+
+| Agent | Role | Status | Gateway |
+|-------|------|--------|---------|
+| **pm-agent** | Orchestrator + user interface | ✅ Live | :18790 |
+| **researcher-a** | Live keyword research (DataForSEO) | ✅ Live | :18793 |
+| **writer-a** | SEO article drafts | ✅ Live | :18794 |
+| **designer-a** | Landing page design | ❌ Not built | — |
+| **seo-a** | Content + technical SEO | ❌ Not built | — |
+| **hermes-cms** | Payload CMS sync | ❌ Not built | — |
+| **hermes-deploy** | Coolify deployment | ❌ Not built | — |
+
+Each agent is a **real OpenClaw agent** — own profile, own gateway, own heartbeat. No sub-agents, no scripts disguised as agents. Coordination via A2A (cross-gateway) + Linear task bus.
+
+---
+
+## Documentation
+
+- **[Architecture Spec](docs/architecture-spec.md)** — System overview, §6.4 Agent Installation Standard
+- **[Agent Specs](docs/agents/)** — PM, Researcher-A, Writer-A, Designer-A, SEO-A, Hermes-CMS, Hermes-Deploy
+- **[Integration Specs](docs/integrations/)** — Linear, Neo4j, DataForSEO, SerpAPI, OpenDesign, Payload, Coolify, Gamma, Zernio
+- **[PLAN.md](PLAN.md)** — 8-week MVP plan + progress
+- **[START-PM.md](START-PM.md)** — How to start/use the pipeline
+- **[USAGE.md](USAGE.md)** — Full usage guide
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
-- OpenClaw installed and configured
+- OpenClaw installed (`/opt/node24/`)
 - Docker + Docker Compose
-- Node.js 20+
 - Python 3.11+
 
-### 1. Clone Repository
+### 1. Clone
 
 ```bash
-git clone https://github.com/your-org/agentic-pipeline.git
+git clone https://github.com/vishal-vendosmart/agentic-pipeline.git
 cd agentic-pipeline
 ```
 
-### 2. Install Dependencies
+### 2. Start Neo4j
 
 ```bash
-# Node.js dependencies
-npm install
-
-# Python dependencies
-pip install -r requirements.txt
-```
-
-### 3. Set Up Services
-
-```bash
-# Start Neo4j
 docker-compose up -d neo4j
-
-# Start OpenDesign
-docker-compose up -d opendesign
-
-# Start Payload CMS
-docker-compose up -d payload
 ```
 
-### 4. Configure Environment
+### 3. Configure
 
 ```bash
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your API keys (Linear, DataForSEO, Neo4j, Ollama)
 ```
 
-### 5. Run Tests
+### 4. Start the agents
 
 ```bash
-npm test
+systemctl start openclaw-pm-gateway openclaw-researcher-a-gateway openclaw-writer-a-gateway
 ```
 
----
+### 5. Use it
 
-## 🤖 Agent Roster (MVP)
-
-| Agent | Role | Status |
-|-------|------|--------|
-| **Project Manager** | Your single interface, orchestrates all agents | ✅ Spec Complete |
-| **Researcher (A)** | Discovers keywords, trends, competitors for ProQSmart | ✅ Spec Complete |
-| **Writer (A)** | Generates SEO-optimized articles | ✅ Spec Complete |
-| **Designer (A)** | Creates React/Tailwind designs | ✅ Spec Complete |
-| **SEO (A)** | Optimizes content + technical SEO | ✅ Spec Complete |
-| **Hermes CMS** | Syncs content to Payload CMS | ✅ Spec Complete |
-| **Hermes Deploy** | Deploys to Coolify | ✅ Spec Complete |
-
----
-
-## 🛠️ Tech Stack
-
-**Orchestration:**
-- OpenClaw (agent framework)
-- Linear (task management)
-
-**Data:**
-- Neo4j (Knowledge Graph)
-- DataForSEO (keyword research)
-- SerpAPI (SERP analysis)
-
-**Content:**
-- Payload CMS (content management)
-- OpenDesign (design generation)
-- Gamma.app (infographics)
-
-**Deployment:**
-- Coolify (deployment automation)
-- Hetzner EX44 (hosting)
-
----
-
-## 📊 Implementation Phases
-
-| Phase | Duration | Deliverables |
-|-------|----------|--------------|
-| **Phase 1** | Week 1-2 | PM agent + Linear integration |
-| **Phase 2** | Week 3 | Researcher agent + Neo4j KG |
-| **Phase 3** | Week 4 | Writer agent |
-| **Phase 4** | Week 5-6 | Designer agent + OpenDesign |
-| **Phase 5** | Week 7 | SEO + Hermes agents |
-| **Phase 6** | Week 8-10 | Polish + v2 prep |
-
----
-
-## 💰 Cost Breakdown
-
-| Service | Tier | Monthly Cost |
-|---------|------|--------------|
-| DataForSEO | Pay-per-use | ~$2.50 (5000 queries) |
-| SerpAPI | Free | $0 (100 searches/mo) |
-| Linear | Free | $0 (1000 issues/mo) |
-| Neo4j | Self-hosted | $0 |
-| OpenDesign | Self-hosted | $0 |
-| Payload CMS | Self-hosted | $0 |
-| Coolify | Self-hosted | $0 |
-| Hetzner EX44 | VPS | €20 |
-| **Total** | | **~$25/month** |
-
----
-
-## 📈 Success Metrics
-
-**MVP (Week 7):**
-- 10 articles published for ProQSmart
-- 5 landing pages live
-- Zero hallucinations
-- <2 hours/week human time
-- <$50/month total cost
-
-**v2 (Week 10):**
-- 20 articles/month across both verticals
-- Automated social posting
-- <1 hour/week human time
-- <$100/month total cost
-
----
-
-## 🔧 Development
+DM **@ProQsmart_pm_bot** on Telegram, or via CLI:
 
 ```bash
-# Run tests
-npm test
-
-# Run linter
-npm run lint
-
-# Build docs
-npm run docs
-
-# Deploy specs
-git add . && git commit -m "Update specs" && git push
+openclaw --profile pm agent --agent pm-agent -m "Research and write an article about AI procurement software"
 ```
 
 ---
 
-## 📝 License
+## Tech Stack
 
-MIT — See [LICENSE](LICENSE) for details
-
----
-
-## 🙋 Support
-
-- **Documentation:** See `/docs` folder
-- **Issues:** Open GitHub issue
-- **Discussions:** GitHub Discussions
+- **Agents:** OpenClaw (3 independent gateways, A2A + Linear bus)
+- **Task management:** Linear (team MAR, labeled issues)
+- **Knowledge graph:** Neo4j (project truth: startup identity, ICP, keywords, competitors)
+- **Keyword research:** DataForSEO Labs (live API, ~$0.04/run)
+- **LLM:** Ollama Cloud (minimax-m3, $0)
+- **Content:** Markdown drafts → Payload CMS (future) → Coolify deploy (future)
 
 ---
 
-**Built for ProQSmart and WeFab AI**  
-**Version:** 1.0  
-**Last Updated:** 2026-07-26
+## Cost
+
+| Service | Budget | Current |
+|---------|--------|---------|
+| DataForSEO | ~$2.50/mo | ~$0.15 spent |
+| Ollama Cloud | $0 | $0 |
+| Linear | $0 (free) | $0 |
+| Neo4j | $0 (self-hosted) | $0 |
+| **Total** | **~$25/mo** | **~$0.15** |
+
+---
+
+## Repository
+
+- **GitHub:** https://github.com/vishal-vendosmart/agentic-pipeline
+- **Branch:** development
+- **Visibility:** Public

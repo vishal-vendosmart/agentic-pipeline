@@ -4,7 +4,7 @@
 **Role:** Coolify Deployment Automation  
 **Vertical:** Both (ProQSmart + WeFab AI)  
 **Runtime:** Python 3.11  
-**Type:** Hermes Agent (Python script)  
+**Type:** Real OpenClaw Agent (future — not yet built)  
 
 ---
 
@@ -24,7 +24,7 @@ Deploy approved content from Payload CMS to production via Coolify. Triggers web
 ```json
 {
   "command": "python",
-  "args": ["/root/.openclaw-pm/hermes-agents/deploy/agent.py"],
+  "args": ["/root/dev/agentic-pipeline/utilities/deploy/agent.py"],
   "env": {
     "VERTICAL": "A",
     "DOMAIN": "proqsmart.com"
@@ -92,7 +92,7 @@ mutation {
 ```python
 #!/usr/bin/env python3
 """
-Hermes Agent: Coolify Deployment Trigger
+Real OpenClaw Agent (future): Coolify Deployment Trigger
 """
 
 import requests

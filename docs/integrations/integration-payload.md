@@ -271,7 +271,7 @@ def handle_payload_webhook():
 ```python
 #!/usr/bin/env python3
 """
-Hermes Agent: Payload CMS Content Sync
+Real OpenClaw Agent (future): Payload CMS Content Sync
 Syncs approved content from workspace to Payload CMS
 """
 

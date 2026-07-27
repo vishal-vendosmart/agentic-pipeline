@@ -4,7 +4,7 @@
 **Role:** Strategic Partner + Orchestrator  
 **Vertical:** Both (ProQSmart + WeFab AI)  
 **Primary Model:** `ollama-cloud/minimax-m3`  
-**Workspace:** `/root/.openclaw-pm/workspace-pm/`
+**Workspace:** `/root/.openclaw-pm/workspace`
 
 ---
 
@@ -401,7 +401,7 @@ async def test_full_workflow():
 **Detection:**
 ```python
 try:
-    await sessions_spawn(agentId="researcher-a", ...)
+    # A2A: openclaw --profile researcher-a agent --agent researcher-a -m "..." --json
 except SpawnError as e:
     await linear.addComment(taskId, f"❌ Failed to spawn agent: {e}")
     await notify_human(f"⚠️ Agent spawn failed: {e}")

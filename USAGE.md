@@ -1,140 +1,70 @@
-# PM Agent - Usage Guide
+# Agentic Pipeline — Usage Guide
 
-## How to Interact with the PM Agent
+## Architecture (3 independent agents)
 
-### 1. **CLI (Recommended for Quick Testing)**
+| Agent | Gateway | Profile | Reachable via |
+|-------|---------|---------|---------------|
+| pm-agent | :18790 | ~/.openclaw-pm | Telegram (@ProQsmart_pm_bot), CLI |
+| researcher-a | :18793 | ~/.openclaw-researcher-a | A2A from PM, CLI, heartbeat |
+| writer-a | :18794 | ~/.openclaw-writer-a | A2A from PM, CLI, heartbeat |
+
+**Coordination:** PM dispatches via A2A (`openclaw --profile <target> agent --json`) + Linear task bus (labeled issues). Each agent's heartbeat polls Linear every 10m for labeled tasks.
+
+## 1. Telegram (PM Agent — user-facing)
+
+DM **@ProQsmart_pm_bot** with a content request (keyword, topic, or brief). PM will:
+1. Create a Linear tracking issue
+2. A2A researcher-a for keyword research
+3. A2A writer-a for article draft
+4. Report results back to you
+
+## 2. CLI — direct agent interaction
+
+```bash
+# PM Agent
+openclaw --profile pm agent --agent pm-agent -m "Research AI procurement keywords and write an article"
+
+# Researcher-A directly
+openclaw --profile researcher-a agent --agent researcher-a -m "Research keywords for: AI procurement software"
+
+# Writer-A directly
+openclaw --profile writer-a agent --agent writer-a -m "Write an article about AI procurement software for SMEs"
+```
+
+## 3. Pipeline CLI (batch utilities — NOT agents)
 
 ```bash
 cd /root/dev/agentic-pipeline
 
-# Run keyword research
-./pm-cli.sh research
-
-# Check Neo4j status
-./pm-cli.sh status
-
-# List keywords
-./pm-cli.sh keywords
+./pm-cli.sh research    # Run keyword research utility directly
+./pm-cli.sh status      # Neo4j database status
+./pm-cli.sh keywords    # List keywords in Neo4j
 ```
 
-### 2. **OpenClaw Session (Full Integration)**
-
-Start an OpenClaw session with the PM agent:
+## 4. Service management
 
 ```bash
-# The PM agent runs in its own isolated profile: /root/.openclaw-pm/openclaw.json
-# Start it with: openclaw --profile pm agents chat pm-agent (or DM @ProQsmart_pm_bot)
-# It has access to:
-# - Linear MCP tools (create/update tasks)
-# - exec tool (spawn Hermes agents)
-# - read/write (workspace management)
-
-# In your OpenClaw session, you can:
-1. Create Linear projects
-2. Spawn researcher: exec python3 /root/.openclaw-pm/hermes-agents/researcher-a/research.py
-3. Track progress in Linear
+# All 3 gateways
+systemctl status openclaw-pm-gateway openclaw-researcher-a-gateway openclaw-writer-a-gateway
+journalctl -u openclaw-pm-gateway -f          # PM logs
+journalctl -u openclaw-researcher-a-gateway -f # Researcher logs
+journalctl -u openclaw-writer-a-gateway -f     # Writer logs
 ```
 
-### 3. **REST API (For Web UIs)**
+## 5. Linear task bus
+
+PM creates issues labeled `agent:researcher-a` or `agent:writer-a`. Each agent's heartbeat polls for its label. Check status:
 
 ```bash
-# Install Flask
-pip install flask
-
-# Start API server
-python3 /root/dev/agentic-pipeline/pm-api.py
-
-# Use endpoints:
-curl -X POST http://localhost:8080/research \
-  -H "Content-Type: application/json" \
-  -d '{"keywords": ["AI software"]}'
-
-curl http://localhost:8080/status
-
-curl http://localhost:8080/keywords
+openclaw --profile pm agent --agent pm-agent -m "What's the status of the pipeline?"
 ```
-
-### 4. **Telegram Bot (Mobile/Chat)**
-
-```bash
-# Set environment variables
-export TELEGRAM_BOT_TOKEN="your_bot_token"
-export TELEGRAM_CHAT_ID="your_chat_id"
-
-# Run bot
-python3 /root/dev/agentic-pipeline/pm-telegram.py research
-```
-
----
-
-## Architecture
-
-```
-User Interface (CLI/API/Telegram/OpenClaw)
-         ↓
-PM Agent (agents/pm/agent.py)
-         ↓
-Spawns via exec → Hermes Researcher (/root/.openclaw-pm/hermes-agents/researcher-vertical-a/)
-         ↓                                    ↓
-Linear MCP Tools                    Neo4j (store keywords)
-```
-
----
-
-## Available Commands
-
-| Command | Interface | Description |
-|---------|-----------|-------------|
-| `research` | All | Run keyword research pipeline |
-| `status` | CLI, API | Show Neo4j database status |
-| `keywords` | CLI, API | List keywords in Neo4j |
-| `create-project` | OpenClaw | Create Linear project |
-| `spawn-writer` | OpenClaw | Spawn Writer agent (TODO) |
-
----
-
-## Example: Full Workflow via CLI
-
-```bash
-# 1. Start research
-./pm-cli.sh research
-
-# 2. Check results
-./pm-cli.sh status
-./pm-cli.sh keywords
-
-# 3. Verify in Neo4j Browser
-# Open http://localhost:7474
-# Run: MATCH (k:Keyword) RETURN k.term, k.volume ORDER BY k.volume DESC
-```
-
----
 
 ## Configuration
 
-**Environment Variables (.env):**
-```bash
-LINEAR_TEAM_ID=6708e155-7999-4102-994c-88e6cdc1180f
-NEO4J_PASSWORD=Agentic2026SecurePass
-DATAFORSEO_EMAIL=vishal@proqsmart.com
-DATAFORSEO_PASSWORD=a25b69e4ad3fbbb2
-```
-
-**Hermes Agents:**
-- Researcher: `/root/.openclaw-pm/hermes-agents/researcher-vertical-a/`
-- Writer: (TODO)
-- Designer: (TODO)
-
-**Neo4j:**
-- Browser: http://localhost:7474
-- Bolt: localhost:7687
-- Password: `Agentic2026SecurePass`
-
----
-
-## Next Steps
-
-1. **Make DataForSEO live** - Add $1 deposit for real API access
-2. **Implement Writer agent** - Create Hermes writer agent
-3. **OpenClaw integration** - Test sessions_spawn from PM to Hermes
-4. **Add Telegram bot** - Configure bot token for chat interface
+- **Repo:** `/root/dev/agentic-pipeline/`
+- **PM config:** `/root/.openclaw-pm/openclaw.json`
+- **Researcher config:** `/root/.openclaw-researcher-a/openclaw.json`
+- **Writer config:** `/root/.openclaw-writer-a/openclaw.json`
+- **Utilities:** `/root/dev/agentic-pipeline/utilities/` (deterministic scripts, NOT agents)
+- **Data:** Neo4j (`agentic-pipeline-neo4j` container, localhost:7474/:7687)
+- **Linear:** team MAR (`6708e155-7999-4102-994c-88e6cdc1180f`)
