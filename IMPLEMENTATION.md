@@ -219,8 +219,50 @@ config (later provided by user but returned Telegram 401 — needs re-issue).
   all paths verified working through symlinks; zero config changes needed
 
 **TODO Next:**
-- [ ] MAR-253: PM agent + Linear MCP integration
-- [ ] Make $1 DataForSEO deposit for live API
+- [x] ~~MAR-253: PM agent + Linear MCP integration~~ ✅ DONE (2026-07-27)
+- [x] ~~Make $1 DataForSEO deposit for live API~~ ✅ NOT NEEDED — account already funded ($52.62)
 - [ ] Start Writer agent implementation
 - [ ] First git commit in PM workspace repo (pending user confirmation)
+
+---
+
+### 2026-07-27 — Saturday (Day 2, cont.) — MAR-253 + NO-SIMULATION POLICY
+
+**Session Type:** MAR-253 implementation + data-integrity hardening
+
+**Policy set by user:** "There should be no simulated outputs or answers."
+
+**What Happened:**
+- ✅ MAR-253 DONE: rewrote `agents/pm/agent.py` → real `LinearClient`
+  (GraphQL @ api.linear.app): create_project, create_issue, get_issue,
+  update_issue (description + state). Zero simulated calls remain.
+- ✅ Real artifacts created by PM: Linear project "ProQSmart Content Pipeline
+  — 2026-07", tracking issues MAR-254 + MAR-255 (real pipeline runs)
+- ✅ MAR-253 closed via the LinearClient itself (dogfooded state change → Done)
+- ✅ DataForSEO: account discovered FUNDED ($52.62 balance) — no $1 deposit needed.
+  Working endpoints: `dataforseo_labs/google/keyword_suggestions/live` +
+  `bulk_keyword_difficulty/live` (old `/keywords_data/*` paths are dead/404)
+- ✅ Hermes researcher rewritten: LIVE DataForSEO only, no mock import,
+  fails loudly on API error, MERGE refreshes values on re-run, provenance
+  fields (source, fetched_at, api_cost_usd) in keyword-strategy.json
+- ✅ Canonical `agents/researcher/agent.py`: dead endpoints fixed, mock
+  fallback removed, default live
+- ✅ Fixed .env NEO4J_PASSWORD placeholder (caused silent auth failures)
+- ✅ Real data verified: 23 live keywords first run (vol/CPC/competition/
+  difficulty all real), Neo4j now 54 keywords, API cost ~$0.04/run
+
+**Decisions Made:**
+1. No mock/simulated data anywhere in the pipeline — loud failure instead
+2. DataForSEO Labs live API as the keyword source (cheap: ~$0.012/call)
+3. Linear project per month + tracking issue per pipeline run
+
+**Metrics:**
+- Linear: MAR-253 Done; project + 2 run-issues created by PM
+- Neo4j: 54 keywords (23+ live-sourced), provenance-tracked
+- DataForSEO cost today: ~$0.12 | Balance: $52.62
+
+**TODO Next:**
+- [ ] Writer agent implementation (Week 3 goal — real content from KG facts)
+- [ ] Neo4j Article node type + VERIFIES chains (needed by Writer)
+- [ ] Zernio social posting integration
 

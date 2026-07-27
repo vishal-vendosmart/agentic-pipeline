@@ -15,10 +15,9 @@ from typing import Dict, List, Optional
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from researcher.mock_data import get_mock_keyword_data
 
 class ResearcherAgent:
-    def __init__(self, use_mock_data: bool = False):
+    def __init__(self):
         # DataForSEO credentials
         self.dataforseo_email = os.getenv('DATAFORSEO_EMAIL', 'vishal@proqsmart.com')
         self.dataforseo_password = os.getenv('DATAFORSEO_PASSWORD', 'a25b69e4ad3fbbb2')
@@ -35,10 +34,7 @@ class ResearcherAgent:
         
         # Workspace
         self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm/workspace-vertical-a')
-        
-        # Use mock data flag (for testing when API not available)
-        self.use_mock_data = use_mock_data
-        
+
         # Auth headers
         auth_string = f"{self.dataforseo_email}:{self.dataforseo_password}"
         self.dataforseo_headers = {
@@ -47,80 +43,80 @@ class ResearcherAgent:
         }
     
     def get_keyword_suggestions(self, seed_keywords: List[str], location_code: int = 2840) -> List[Dict]:
-        """Get keyword suggestions from DataForSEO or mock data"""
-        
+        """Get keyword suggestions from LIVE DataForSEO Labs API. Fails loudly on error."""
+
         print(f"🔍 Getting keyword suggestions for: {seed_keywords}")
-        
-        # Use mock data for now (API needs account activation)
-        if self.use_mock_data:
-            print("   ℹ️ Using mock data (DataForSEO API needs activation)")
-            mock_data = get_mock_keyword_data()
-            suggestions = mock_data['suggestions']
-            print(f"   ✓ Loaded {len(suggestions)} mock keyword suggestions")
-            return suggestions
-        
-        # Live API call (commented out until API is activated)
-        payload = [{
-            'keywords': seed_keywords,
-            'location_code': location_code,
-            'language_code': 'en',
-            'search_volume_min': 100
-        }]
-        
-        response = requests.post(
-            f'{self.dataforseo_base}/keywords_data/google/keywords/suggestions',
-            headers=self.dataforseo_headers,
-            json=payload,
-            timeout=60
-        )
-        
-        if response.status_code == 200:
+
+        suggestions: Dict[str, Dict] = {}
+        for seed in seed_keywords:
+            payload = [{
+                'keyword': seed,
+                'location_code': location_code,
+                'language_code': 'en',
+                'limit': 20,
+                'include_seed_keyword': True,
+            }]
+
+            response = requests.post(
+                f'{self.dataforseo_base}/dataforseo_labs/google/keyword_suggestions/live',
+                headers=self.dataforseo_headers,
+                json=payload,
+                timeout=60
+            )
+
+            if response.status_code != 200:
+                raise RuntimeError(f"DataForSEO API error: {response.text}")
+
             data = response.json()
-            if data.get('tasks') and len(data['tasks']) > 0:
-                results = data['tasks'][0].get('result', [])
-                print(f"   ✓ Found {len(results)} keyword suggestions")
-                return results
-            else:
-                print("   ⚠ No results returned")
-                return []
-        else:
-            print(f"   ❌ DataForSEO API error: {response.text}")
-            print("   ℹ️ Falling back to mock data")
-            mock_data = get_mock_keyword_data()
-            return mock_data['suggestions']
-    
+            if data.get('status_code') != 20000:
+                raise RuntimeError(f"DataForSEO error {data.get('status_code')}: {data.get('status_message')}")
+
+            items = ((data['tasks'][0].get('result') or [{}])[0]).get('items') or []
+            for it in items:
+                ki = it.get('keyword_info', {}) or {}
+                term = it.get('keyword')
+                if not term:
+                    continue
+                vol = ki.get('search_volume') or 0
+                if term not in suggestions or vol > suggestions[term]['search_volume']:
+                    suggestions[term] = {'keyword': term, 'search_volume': vol,
+                                         'cpc': ki.get('cpc'), 'competition': ki.get('competition')}
+
+        print(f"   ✓ Found {len(suggestions)} keyword suggestions (live)")
+        return list(suggestions.values())
+
     def get_keyword_difficulty(self, keywords: List[str]) -> List[Dict]:
-        """Get keyword difficulty scores"""
-        
+        """Get REAL keyword difficulty scores from DataForSEO Labs. Fails loudly on error."""
+
         print(f"📊 Getting difficulty scores for {len(keywords)} keywords...")
-        
-        if self.use_mock_data:
-            mock_data = get_mock_keyword_data()
-            difficulty = mock_data['difficulty']
-            print(f"   ✓ Loaded difficulty for {len(difficulty)} keywords")
-            return difficulty
-        
-        payload = [{'keywords': keywords}]
-        
+
+        if not keywords:
+            return []
+
+        payload = [{'keywords': keywords, 'location_code': 2840, 'language_code': 'en'}]
+
         response = requests.post(
-            f'{self.dataforseo_base}/keywords_data/google/keywords/difficulty',
+            f'{self.dataforseo_base}/dataforseo_labs/google/bulk_keyword_difficulty/live',
             headers=self.dataforseo_headers,
             json=payload,
             timeout=60
         )
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get('tasks') and len(data['tasks']) > 0:
-                results = data['tasks'][0].get('result', [])
-                print(f"   ✓ Got difficulty for {len(results)} keywords")
-                return results
-            else:
-                return []
-        else:
-            print(f"   ❌ DataForSEO error: {response.text}")
-            mock_data = get_mock_keyword_data()
-            return mock_data['difficulty']
+
+        if response.status_code != 200:
+            raise RuntimeError(f"DataForSEO API error: {response.text}")
+
+        data = response.json()
+        if data.get('status_code') != 20000:
+            raise RuntimeError(f"DataForSEO error {data.get('status_code')}: {data.get('status_message')}")
+
+        results = []
+        for r in (data['tasks'][0].get('result') or []):
+            for it in (r.get('items') or []):
+                if it.get('keyword'):
+                    results.append({'keyword': it['keyword'],
+                                    'keyword_difficulty': it.get('keyword_difficulty') or 0})
+        print(f"   ✓ Got difficulty for {len(results)} keywords (live)")
+        return results
     
     def store_in_neo4j(self, keywords: List[Dict], difficulty: List[Dict]) -> int:
         """Store keyword research results in Neo4j"""
@@ -230,10 +226,8 @@ ON MATCH SET k.volume = {volume},
 
 # Main execution
 if __name__ == '__main__':
-    # Use mock data for testing (set to False when DataForSEO API is activated)
-    use_mock = True
-    
-    researcher = ResearcherAgent(use_mock_data=use_mock)
+    # LIVE data only — no mock fallback (fails loudly on API error)
+    researcher = ResearcherAgent()
     
     # Research keywords for ProQSmart
     seed_keywords = [
