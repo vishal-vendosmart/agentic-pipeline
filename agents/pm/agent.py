@@ -142,6 +142,37 @@ class PMOrchestrator:
         self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm')
         self.hermes_agents_dir = f'{self.workspace}/utilities'
 
+    # ---------- A2A: cross-gateway agent-to-agent commands ----------
+
+    def a2a_send(self, target_profile: str, target_agent: str, message: str, timeout: int = 300) -> Dict:
+        """Send a real-time command to another agent's gateway and get its response.
+        Uses: openclaw --profile <target> agent --agent <id> -m "..." --json
+        This is cross-gateway A2A — PM talks to researcher-a/writer-a in real time."""
+        print(f"📡 A2A → {target_agent} (profile {target_profile}): {message[:80]}...")
+        result = subprocess.run(
+            ['openclaw', '--profile', target_profile, 'agent',
+             '--agent', target_agent, '-m', message, '--json'],
+            capture_output=True, text=True, timeout=timeout
+        )
+        if result.returncode != 0:
+            return {'success': False, 'error': result.stderr[:300], 'agent': target_agent}
+        try:
+            d = json.loads(result.stdout)
+            r = d.get('result', d)
+            txt = r.get('payloads', [{}])[0].get('text', '') if isinstance(r, dict) else str(r)
+            print(f"   ✓ {target_agent} responded ({len(txt)} chars)")
+            return {'success': True, 'agent': target_agent, 'response': txt}
+        except Exception as e:
+            return {'success': False, 'error': f'parse: {e}', 'stdout': result.stdout[:200], 'agent': target_agent}
+
+    def command_researcher(self, message: str) -> Dict:
+        """Real-time A2A command to Researcher-A agent (gateway :18793)."""
+        return self.a2a_send('researcher-a', 'researcher-a', message)
+
+    def command_writer(self, message: str) -> Dict:
+        """Real-time A2A command to Writer-A agent (gateway :18794)."""
+        return self.a2a_send('writer-a', 'writer-a', message)
+
     def spawn_researcher(self, seed_keywords: List[str], vertical: str = 'A') -> Dict:
         """Spawn Researcher Hermes agent via exec (real subprocess)"""
 
