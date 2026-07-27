@@ -297,26 +297,38 @@ All self-hosted services run on **Hetzner EX44** server (Helsinki):
 
 ### 6.4 Agent Installation Standard (amended 2026-07-27)
 
-**All pipeline agents are REAL OpenClaw agents** — never Python scripts
-masquerading as agents. Standard for every agent (existing and future):
+**Every pipeline agent is a fully independent OpenClaw agent** — own profile,
+own gateway, own systemd service, own heartbeat. No sub-agents, no shared
+profiles, no `sessions_spawn` across agents. Each is single-purpose and
+autonomous.
 
-1. **Registration:** entry in `agents.list` of the isolated PM profile
-   (`/root/.openclaw-pm/openclaw.json`) — own `workspace`, own `agentDir`
-   (`system.md` + `IDENTITY.md`), own sessions + memory. Content symlinked
-   into the project repo (same pattern as PM).
-2. **Orchestration:** PM spawns agents via `sessions_spawn` (agent-to-agent
-   messaging allowlisted via `tools.agentToAgent`). Agents report results to
-   PM; PM alone talks to Linear/Telegram.
-3. **Independence Rule:** no agent is built on, wraps, or delegates to an
-   agent outside the PM profile. No cross-gateway spawning (Milo stays
-   fully isolated).
-4. **Utilities are NOT agents:** deterministic Python helpers (DataForSEO
-   fetch, batch cypher) live in `utilities/` and exist solely as `exec`
-   tools agents may call. They have no identity, memory, or agency.
-5. **Real data only:** no mock/simulated outputs anywhere; agents fail
-   loudly on API errors.
-6. **Zero hallucinations:** content agents must ground statistics in Neo4j
-   KG facts and self-verify before marking output `verified`.
+**Three independent agents (MVP Vertical A):**
+
+| Agent | Profile home | Gateway port | systemd unit | Telegram bot |
+|-------|-------------|-------------|--------------|--------------|
+| pm-agent | `~/.openclaw-pm` | 18790 | `openclaw-pm-gateway.service` | @ProQsmart_pm_bot |
+| researcher-a | `~/.openclaw-researcher-a` | 18793 | `openclaw-researcher-a-gateway.service` | (pending token) |
+| writer-a | `~/.openclaw-writer-a` | 18794 | `openclaw-writer-a-gateway.service` | (pending token) |
+
+**Coordination: Linear task bus (not sessions_spawn).**
+PM dispatches work by creating Linear issues labeled `agent:researcher-a` or
+`agent:writer-a`. Each agent's heartbeat cron (every 10 min) polls Linear for
+issues with its label in Backlog, claims them (→ In Progress), executes its
+single-purpose role, updates the issue with results, and moves to Done. PM
+monitors issue states and reports to the user.
+
+- **Shared data:** Neo4j KG + workspace files (`workspace-vertical-a/research/`, `drafts/`)
+- **Shared task bus:** Linear (team `MAR`, labels `agent:researcher-a` / `agent:writer-a`)
+- **Independence:** no agent can spawn or message another; each runs in its own gateway process
+
+**Installation checklist (per agent):**
+1. Own openclaw profile (`~/.openclaw-<name>`) — single agent in `agents.list`
+2. Own gateway port + systemd service + hardening drop-in
+3. Own workspace (symlinked into repo) + agentDir (system.md + IDENTITY.md)
+4. Own heartbeat cron job (polls Linear for labeled tasks)
+5. Real data only: no mock/simulated outputs; loud failure on API errors
+6. Zero hallucinations: content agents ground statistics in Neo4j KG facts
+7. `openclaw --profile <name> doctor --fix` passes (0 errors)
 
 ---
 
