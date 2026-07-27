@@ -1,7 +1,7 @@
 {
   "name": "writer-vertical-a",
   "description": "SEO article writer for ProQSmart (Vertical A). Independent standalone agent: own LLM client, KG-grounded drafts, zero-hallucination verification.",
-  "entry_point": "/root/dev/agentic-pipeline/hermes-agents/writer-vertical-a/agent.py",
+  "entry_point": "/root/dev/agentic-pipeline/utilities/writer-vertical-a/agent.py",
   "runtime": "python3",
   "workspace": "/root/.openclaw-pm/workspace-vertical-a",
   "independence": "Does NOT use/spawn/delegate to any other agent. Handoffs only via Neo4j KG + files + Linear.",

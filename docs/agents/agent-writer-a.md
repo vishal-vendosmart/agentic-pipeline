@@ -1,6 +1,14 @@
 # Agent Specification: Writer (ProQSmart)
 
-**ID:** `writer-vertical-a`  
+> **⚠ AMENDED 2026-07-27 — Real agent installation.**
+> This agent is installed as a **real OpenClaw agent** in the isolated PM profile:
+> registered in `/root/.openclaw-pm/openclaw.json` (`agents.list`), own workspace
+> (`/root/.openclaw-pm/workspace-writer-a`), own agentDir
+> (`/root/.openclaw-pm/agents/writer-a/agent/`). PM spawns it via
+> `sessions_spawn`. The deterministic Python helper in `utilities/researcher-vertical-a/`
+> is an exec utility it may call — it is NOT the agent itself.
+> See architecture-spec.md §6.4 (Agent Installation Standard).
+**ID:** `writer-a`  
 **Role:** Content Generation + SEO Writing  
 **Vertical:** ProQSmart (Vertical A)  
 **Primary Model:** `ollama-cloud/gemma4:31b`  
@@ -615,7 +623,7 @@ def test_meta_generation():
 async def test_full_content_generation():
     # 1. Spawn writer agent
     await sessions_spawn(
-        agentId="writer-vertical-a",
+        agentId="writer-a",
         task="Write 5 blog posts about AI procurement",
         params={
             "keywords": ["AI procurement software"],

@@ -287,13 +287,36 @@ All self-hosted services run on **Hetzner EX44** server (Helsinki):
 
 | Agent | Required Tools |
 |-------|---------------|
-| PM | `sessions_spawn`, `sessions_send`, `linear-sdk`, `read`, `write` |
-| Researcher | `web_search`, `web_fetch`, `browser-automation`, `neo4j-driver`, `dataforseo-client`, `serpapi-client` |
-| Writer | `read`, `write`, `edit`, `sessions_history`, `neo4j-driver` |
-| Designer | `canvas`, `browser`, `web_fetch`, `exec` |
-| SEO | `web_search`, `web_fetch`, `dataforseo-client`, `exec` |
-| Hermes CMS | `exec` (Python) |
-| Hermes Deploy | `exec` (Python) |
+| PM | `sessions_spawn`, `sessions_send`, `linear_*`, `read`, `write`, `exec` |
+| Researcher-A | `exec`, `bash` (DataForSEO Labs via utilities + curl), `read`, `write`, `sessions_send` |
+| Writer-A | `read`, `write`, `exec`, `bash` (Neo4j cypher-shell), `sessions_send` |
+| Designer-A | `read`, `write`, `exec`, `sessions_send` |
+| SEO-A | `exec`, `bash`, `read`, `write`, `sessions_send` |
+| Hermes CMS | `exec`, `bash`, `read`, `write`, `sessions_send` |
+| Hermes Deploy | `exec`, `bash`, `sessions_send` |
+
+### 6.4 Agent Installation Standard (amended 2026-07-27)
+
+**All pipeline agents are REAL OpenClaw agents** — never Python scripts
+masquerading as agents. Standard for every agent (existing and future):
+
+1. **Registration:** entry in `agents.list` of the isolated PM profile
+   (`/root/.openclaw-pm/openclaw.json`) — own `workspace`, own `agentDir`
+   (`system.md` + `IDENTITY.md`), own sessions + memory. Content symlinked
+   into the project repo (same pattern as PM).
+2. **Orchestration:** PM spawns agents via `sessions_spawn` (agent-to-agent
+   messaging allowlisted via `tools.agentToAgent`). Agents report results to
+   PM; PM alone talks to Linear/Telegram.
+3. **Independence Rule:** no agent is built on, wraps, or delegates to an
+   agent outside the PM profile. No cross-gateway spawning (Milo stays
+   fully isolated).
+4. **Utilities are NOT agents:** deterministic Python helpers (DataForSEO
+   fetch, batch cypher) live in `utilities/` and exist solely as `exec`
+   tools agents may call. They have no identity, memory, or agency.
+5. **Real data only:** no mock/simulated outputs anywhere; agents fail
+   loudly on API errors.
+6. **Zero hallucinations:** content agents must ground statistics in Neo4j
+   KG facts and self-verify before marking output `verified`.
 
 ---
 

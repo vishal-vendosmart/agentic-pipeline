@@ -137,7 +137,7 @@ class ProjectManagerAgent:
     def __init__(self):
         self.linear = LinearClient()
         self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm')
-        self.hermes_agents_dir = f'{self.workspace}/hermes-agents'
+        self.hermes_agents_dir = f'{self.workspace}/utilities'
 
     def spawn_researcher(self, seed_keywords: List[str], vertical: str = 'A') -> Dict:
         """Spawn Researcher Hermes agent via exec (real subprocess)"""

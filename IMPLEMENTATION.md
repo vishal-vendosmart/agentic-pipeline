@@ -117,6 +117,42 @@
 | 2026-07-26 | Constraints need indexes dropped first | Neo4j: Drop before create |
 | 2026-07-27 | **Agent Independence Rule** (user directive): every new agent is a standalone entity — own script, workspace, config, LLM client. NEVER built on or delegating to an existing agent (no Milo writer, no sessions_spawn into another gateway). Handoffs only via KG + files + Linear. | Architecture: applies to Writer-A, Designer-A, SEO-A, Hermes, all -B variants |
 | 2026-07-27 | No simulated outputs/answers (user directive) | Data: mock fallbacks removed everywhere, loud failure instead |
+| 2026-07-27 | **Real agents only** (user directive): agents must be real openclaw agents (identity, workspace, sessions, memory) — never Python scripts disguised as agents. Scripts demoted to `utilities/`. Codified in architecture-spec.md §6.4 Agent Installation Standard. | Architecture: researcher-a + writer-a converted; all future agents install this way |
+
+---
+
+### 2026-07-27 — Saturday (Day 2, cont.) — REAL AGENTS CONVERSION (MAR-257)
+
+**Session Type:** Architecture correction — scripts → real openclaw agents
+
+**What Happened:**
+- ✅ Registered `researcher-a` + `writer-a` as real openclaw agents in PM
+  profile (own workspaces, agentDirs with system.md/IDENTITY.md, sessions, memory)
+- ✅ Enabled agent-to-agent: `tools.agentToAgent` + pm-agent
+  `subagents.allowAgents: [researcher-a, writer-a]`
+- ✅ E2E verified: PM `sessions_spawn` → researcher-a wrote its own cypher,
+  returned top-3 KG keywords (2400/45, 1900/52, 1600/40) — real orchestration
+- ✅ Identity tests: both agents answer with their own roles
+- ✅ `hermes-agents/` renamed `utilities/` (git mv) — scripts are tools, not agents
+- ✅ Specs amended: architecture-spec §6.4 (Agent Installation Standard),
+  agent-pm.md + both agent specs (IDs researcher-a/writer-a + amendment notes),
+  START-PM.md architecture table, PM workspace IDENTITY.md
+- ✅ MAR-257 created → closed with real results
+
+**Decisions Made:**
+1. All pipeline agents = real openclaw agents in PM's isolated profile
+2. Orchestration via sessions_spawn (native openclaw), not exec-python
+3. utilities/ for deterministic helpers — explicitly NOT agents
+4. Future agents (designer-a, seo-a, hermes-cms, hermes-deploy, -B): same standard
+
+**Metrics:**
+- Real openclaw agents in PM profile: 3 (pm-agent, researcher-a, writer-a)
+- Specs amended: 4 | Linear: MAR-257 Done | gateways: 2 active, 0 errors
+
+**TODO Next:**
+- [ ] 2 more article drafts via writer-a (Week 3 goal: 3)
+- [ ] Zernio social posting integration
+- [ ] Designer-A as real openclaw agent (Week 4)
 
 ---
 

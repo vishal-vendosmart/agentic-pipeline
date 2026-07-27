@@ -1,6 +1,14 @@
 # Agent Specification: Researcher (ProQSmart)
 
-**ID:** `researcher-vertical-a`  
+> **⚠ AMENDED 2026-07-27 — Real agent installation.**
+> This agent is installed as a **real OpenClaw agent** in the isolated PM profile:
+> registered in `/root/.openclaw-pm/openclaw.json` (`agents.list`), own workspace
+> (`/root/.openclaw-pm/workspace-researcher-a`), own agentDir
+> (`/root/.openclaw-pm/agents/researcher-a/agent/`). PM spawns it via
+> `sessions_spawn`. The deterministic Python helper in `utilities/researcher-vertical-a/`
+> is an exec utility it may call — it is NOT the agent itself.
+> See architecture-spec.md §6.4 (Agent Installation Standard).
+**ID:** `researcher-a`  
 **Role:** Industry Research + Keyword Discovery  
 **Vertical:** ProQSmart (Vertical A)  
 **Primary Model:** `ollama-cloud/minimax-m3`  
@@ -464,7 +472,7 @@ def test_opportunity_score():
 async def test_full_research():
     # 1. Spawn researcher
     await sessions_spawn(
-        agentId="researcher-vertical-a",
+        agentId="researcher-a",
         task="Research manufacturing AI keywords"
     )
     

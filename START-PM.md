@@ -12,11 +12,16 @@ Same pattern as Milo: openclaw runtime state in the profile dir, **content lives
 | Gateway port | 18789 | 18790 |
 | systemd unit | `openclaw-gateway.service` | `openclaw-pm-gateway.service` |
 | Telegram bot | `@Proqsmart_agent_bot` | `@ProQsmart_pm_bot` |
-| Agents | main, writer | pm-agent (only) |
+| Agents | main, writer | **pm-agent, researcher-a, writer-a** (all real openclaw agents) |
 
-PM's symlinks: `/root/.openclaw-pm/{workspace, hermes-agents, workspace-vertical-a}` → `/root/dev/agentic-pipeline/`
+PM's symlinks: `/root/.openclaw-pm/{workspace, workspace-researcher-a, workspace-writer-a, workspace-vertical-a, utilities}` → `/root/dev/agentic-pipeline/`
 
-There is **no shared config, no shared bot, no routing between them**.
+All pipeline agents are REAL openclaw agents in the PM profile (see
+architecture-spec.md §6.4 Agent Installation Standard). PM orchestrates them
+via `sessions_spawn`. Deterministic Python helpers live in `utilities/` and
+are NOT agents.
+
+There is **no shared config, no shared bot, no routing between Milo and the pipeline**.
 
 ## Method 1: Telegram (primary)
 

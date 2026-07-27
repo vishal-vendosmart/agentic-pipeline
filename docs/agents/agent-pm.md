@@ -104,7 +104,7 @@ mutation {
 **Example:**
 ```json
 {
-  "agentId": "researcher-vertical-a",
+  "agentId": "researcher-a",
   "task": "Research manufacturing AI keywords",
   "params": {
     "objective": "Generate 20 leads/month",
@@ -177,8 +177,8 @@ const project = await linear.createIssue({
 **Step 4: Break Down into Tasks**
 ```python
 tasks = [
-    {"name": "Keyword Research", "agent": "researcher-vertical-a", "estimate": "2 days"},
-    {"name": "Write 10 Pillar Articles", "agent": "writer-vertical-a", "estimate": "5 days"},
+    {"name": "Keyword Research", "agent": "researcher-a", "estimate": "2 days"},
+    {"name": "Write 10 Pillar Articles", "agent": "writer-a", "estimate": "5 days"},
     {"name": "Design 5 Landing Pages", "agent": "designer-vertical-a", "estimate": "3 days"},
     {"name": "SEO Optimization", "agent": "seo-vertical-a", "estimate": "2 days"},
     {"name": "Deploy to Production", "agent": "hermes-deploy", "estimate": "1 day"}
@@ -321,8 +321,8 @@ OPENCLAW_TOKEN=xxx
     "maxChildrenPerAgent": 10,
     "runTimeoutSeconds": 1800,
     "allowAgents": [
-      "researcher-vertical-a",
-      "writer-vertical-a",
+      "researcher-a",
+      "writer-a",
       "designer-vertical-a",
       "seo-vertical-a",
       "hermes-cms-sync",
@@ -401,7 +401,7 @@ async def test_full_workflow():
 **Detection:**
 ```python
 try:
-    await sessions_spawn(agentId="researcher-vertical-a", ...)
+    await sessions_spawn(agentId="researcher-a", ...)
 except SpawnError as e:
     await linear.addComment(taskId, f"❌ Failed to spawn agent: {e}")
     await notify_human(f"⚠️ Agent spawn failed: {e}")
