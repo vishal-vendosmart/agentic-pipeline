@@ -56,6 +56,9 @@ htmlcov/
 # Workspace
 workspace-*/
 .openclaw/workspace-*/
+workspace/.openclaw/
+hermes-agents/__pycache__/
+hermes-agents/*/__pycache__/
 
 # Secrets
 *.pem

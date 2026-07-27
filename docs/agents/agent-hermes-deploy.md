@@ -24,7 +24,7 @@ Deploy approved content from Payload CMS to production via Coolify. Triggers web
 ```json
 {
   "command": "python",
-  "args": ["/root/.openclaw/hermes-agents/deploy/agent.py"],
+  "args": ["/root/.openclaw-pm/hermes-agents/deploy/agent.py"],
   "env": {
     "VERTICAL": "A",
     "DOMAIN": "proqsmart.com"

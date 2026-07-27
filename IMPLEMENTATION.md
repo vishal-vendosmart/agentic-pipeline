@@ -172,3 +172,55 @@
 - [ ] Make $1 DataForSEO deposit for live API
 - [ ] Start Writer agent implementation
 
+---
+
+### 2026-07-27 — Saturday (Day 2, cont.) — SEPARATION & ISOLATION FIX
+
+**Session Type:** Critical architecture repair
+
+**Root cause found:** A previous session had written PM's bot token into Milo's
+gateway config (`openclaw.json.clobbered.2026-07-26T18-17` event), hijacking both
+bots: PM's bot (@ProQsmart_pm_bot) was polled by Milo's gateway with a routing
+rule sending all telegram DMs to pm-agent. Milo's own bot token was lost from
+config (later provided by user but returned Telegram 401 — needs re-issue).
+
+**What Happened:**
+- ✅ Removed pm-agent entry + telegram routing binding from Milo's `openclaw.json`
+- ✅ Disabled telegram channel in Milo's config (placeholder `PENDING_REAL_MILO_BOT_TOKEN`)
+- ✅ Milo's gateway restored: agents = main + writer only, zero routing rules
+- ✅ Created isolated PM profile `/root/.openclaw-pm` (openclaw `--profile pm`)
+- ✅ PM gateway on port 18790, systemd unit `openclaw-pm-gateway.service` (enabled)
+- ✅ PM telegram channel on its own bot @ProQsmart_pm_bot — polling verified in logs
+- ✅ Migrated: workspace-pm → `/root/.openclaw-pm/workspace`, agents/pm-agent,
+  hermes-agents, workspace-vertical-a, xai.env → all under `/root/.openclaw-pm/`
+- ✅ Deleted workaround scripts pm-standalone-bot.py + pm-telegram.py
+- ✅ Fixed pm-api.py (missing `import os` crash)
+- ✅ Fixed all stale paths in agents/pm/agent.py, researcher/agent.py, .env, docs
+- ✅ Completed PM workspace bootstrap (IDENTITY.md filled, BOOTSTRAP.md removed)
+- ✅ Rewrote START-PM.md with correct architecture; fixed USAGE.md
+- ✅ Verified: hermes researcher loads at new path, workspace resolves
+
+**Decisions Made:**
+1. PM = separate openclaw profile (`~/.openclaw-pm`), NOT an agent inside Milo's gateway
+2. No workaround scripts — PM telegram goes through its own gateway channel only
+3. Stale manifest `/root/.openclaw/agents/pm-agent.json` archived (referenced
+   non-existent writer-vertical-a; superseded by real config)
+4. Same ollama-cloud + xAI vendor keys reused (infra-level accounts, not agent coupling)
+
+**Blockers:** (none)
+
+**Resolved same session:**
+- ✅ Milo's telegram restored — user regenerated token via BotFather /revoke,
+  new token (bot 8618721387 = @Proqsmart_agent_bot "Milo") verified via getMe,
+  written to his config, gateway restarted, polling confirmed
+- ✅ Content relocated to project repo (mirrors Milo's marketing-stack pattern):
+  workspace, hermes-agents, workspace-vertical-a moved to
+  `/root/dev/agentic-pipeline/` with symlinks from `/root/.openclaw-pm/`;
+  all paths verified working through symlinks; zero config changes needed
+
+**TODO Next:**
+- [ ] MAR-253: PM agent + Linear MCP integration
+- [ ] Make $1 DataForSEO deposit for live API
+- [ ] Start Writer agent implementation
+- [ ] First git commit in PM workspace repo (pending user confirmation)
+

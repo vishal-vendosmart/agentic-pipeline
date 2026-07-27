@@ -4,7 +4,7 @@
 **Role:** Strategic Partner + Orchestrator  
 **Vertical:** Both (ProQSmart + WeFab AI)  
 **Primary Model:** `ollama-cloud/minimax-m3`  
-**Workspace:** `/root/.openclaw/workspace-pm/`
+**Workspace:** `/root/.openclaw-pm/workspace-pm/`
 
 ---
 

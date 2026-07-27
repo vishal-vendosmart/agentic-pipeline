@@ -7,6 +7,7 @@ Usage: curl http://localhost:8080/research
 from flask import Flask, jsonify, request
 import subprocess
 import json
+import os
 import re
 
 app = Flask(__name__)

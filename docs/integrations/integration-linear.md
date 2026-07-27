@@ -397,7 +397,7 @@ Research and discover 50+ keywords for ProQSmart's AI procurement platform.
 
 ## Links
 - Linear Project: MAR-123
-- Workspace: /root/.openclaw/workspace-vertical-a/research/
+- Workspace: /root/.openclaw-pm/workspace-vertical-a/research/
 ```
 
 ### 7.3 Progress Updates

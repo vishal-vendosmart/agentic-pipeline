@@ -1,0 +1,26 @@
+[Unit]
+Description=OpenClaw Gateway — PM Agent (agentic-pipeline, isolated profile)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/root/.openclaw-pm/.env.gateway
+ExecStart=/opt/node24/bin/node /opt/node24/pnpm-global/5/.pnpm/openclaw@2026.5.19/node_modules/openclaw/dist/index.js --profile pm gateway --port 18790
+WorkingDirectory=/root/.openclaw-pm
+Environment="HOME=/root"
+Environment="NODE_ENV=production"
+Restart=on-failure
+RestartSec=15s
+RestartPreventExitStatus=78
+StartLimitInterval=120s
+StartLimitBurst=5
+TimeoutStartSec=60s
+TimeoutStopSec=30s
+KillMode=mixed
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openclaw-pm-gateway
+
+[Install]
+WantedBy=multi-user.target

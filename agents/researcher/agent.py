@@ -34,7 +34,7 @@ class ResearcherAgent:
         self.neo4j_password = os.getenv('NEO4J_PASSWORD', 'Agentic2026SecurePass')
         
         # Workspace
-        self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw/workspace-vertical-a')
+        self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm/workspace-vertical-a')
         
         # Use mock data flag (for testing when API not available)
         self.use_mock_data = use_mock_data

@@ -22,7 +22,8 @@ cd /root/dev/agentic-pipeline
 Start an OpenClaw session with the PM agent:
 
 ```bash
-# The PM agent is configured in /root/.openclaw/agents/pm-agent.json
+# The PM agent runs in its own isolated profile: /root/.openclaw-pm/openclaw.json
+# Start it with: openclaw --profile pm agents chat pm-agent (or DM @ProQsmart_pm_bot)
 # It has access to:
 # - Linear MCP tools (create/update tasks)
 # - exec tool (spawn Hermes agents)
@@ -30,7 +31,7 @@ Start an OpenClaw session with the PM agent:
 
 # In your OpenClaw session, you can:
 1. Create Linear projects
-2. Spawn researcher: exec python3 /root/.openclaw/hermes-agents/researcher-vertical-a/agent.py
+2. Spawn researcher: exec python3 /root/.openclaw-pm/hermes-agents/researcher-vertical-a/agent.py
 3. Track progress in Linear
 ```
 
@@ -73,7 +74,7 @@ User Interface (CLI/API/Telegram/OpenClaw)
          ↓
 PM Agent (agents/pm/agent.py)
          ↓
-Spawns via exec → Hermes Researcher (/root/.openclaw/hermes-agents/researcher-vertical-a/)
+Spawns via exec → Hermes Researcher (/root/.openclaw-pm/hermes-agents/researcher-vertical-a/)
          ↓                                    ↓
 Linear MCP Tools                    Neo4j (store keywords)
 ```
@@ -120,7 +121,7 @@ DATAFORSEO_PASSWORD=a25b69e4ad3fbbb2
 ```
 
 **Hermes Agents:**
-- Researcher: `/root/.openclaw/hermes-agents/researcher-vertical-a/`
+- Researcher: `/root/.openclaw-pm/hermes-agents/researcher-vertical-a/`
 - Writer: (TODO)
 - Designer: (TODO)
 

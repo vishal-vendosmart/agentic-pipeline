@@ -24,9 +24,9 @@ Sync approved content from workspace to Payload CMS. Handles authentication, con
 ```json
 {
   "command": "python",
-  "args": ["/root/.openclaw/hermes-agents/cms-sync/agent.py"],
+  "args": ["/root/.openclaw-pm/hermes-agents/cms-sync/agent.py"],
   "env": {
-    "FILEPATH": "/root/.openclaw/workspace-seo-a/optimized/2026-07-26-ai-procurement.md",
+    "FILEPATH": "/root/.openclaw-pm/workspace-seo-a/optimized/2026-07-26-ai-procurement.md",
     "VERTICAL": "A"
   }
 }
@@ -35,8 +35,8 @@ Sync approved content from workspace to Payload CMS. Handles authentication, con
 ### 2.2 From Workspace
 
 **Files:**
-- Optimized articles: `/root/.openclaw/workspace-seo-*/optimized/*.md`
-- JSON-LD schema: `/root/.openclaw/workspace-seo-*/schema/*.jsonld`
+- Optimized articles: `/root/.openclaw-pm/workspace-seo-*/optimized/*.md`
+- JSON-LD schema: `/root/.openclaw-pm/workspace-seo-*/schema/*.jsonld`
 
 ---
 

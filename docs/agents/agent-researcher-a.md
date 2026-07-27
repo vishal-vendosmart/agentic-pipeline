@@ -4,7 +4,7 @@
 **Role:** Industry Research + Keyword Discovery  
 **Vertical:** ProQSmart (Vertical A)  
 **Primary Model:** `ollama-cloud/minimax-m3`  
-**Workspace:** `/root/.openclaw/workspace-vertical-a/research/`
+**Workspace:** `/root/.openclaw-pm/workspace-vertical-a/research/`
 
 ---
 
@@ -59,9 +59,9 @@ RETURN c.name, c.domain
 ### 3.1 To Workspace
 
 **Files Created:**
-- `/root/.openclaw/workspace-vertical-a/research/keyword-strategy.json`
-- `/root/.openclaw/workspace-vertical-a/research/competitor-analysis.md`
-- `/root/.openclaw/workspace-vertical-a/research/industry-trends.md`
+- `/root/.openclaw-pm/workspace-vertical-a/research/keyword-strategy.json`
+- `/root/.openclaw-pm/workspace-vertical-a/research/competitor-analysis.md`
+- `/root/.openclaw-pm/workspace-vertical-a/research/industry-trends.md`
 
 **Example - keyword-strategy.json:**
 ```json
@@ -394,7 +394,7 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=your-password
 
 # OpenClaw
-OPENCLAW_WORKSPACE=/root/.openclaw/workspace-vertical-a
+OPENCLAW_WORKSPACE=/root/.openclaw-pm/workspace-vertical-a
 ```
 
 ### 6.2 Model Configuration

@@ -4,7 +4,7 @@
 **Role:** Content Generation + SEO Writing  
 **Vertical:** ProQSmart (Vertical A)  
 **Primary Model:** `ollama-cloud/gemma4:31b`  
-**Workspace:** `/root/.openclaw/workspace-vertical-a/drafts/`
+**Workspace:** `/root/.openclaw-pm/workspace-vertical-a/drafts/`
 
 ---
 
@@ -40,9 +40,9 @@ Generate SEO-optimized, fact-grounded content for ProQSmart including blog posts
 **Format:** JSON files in workspace
 
 **Files:**
-- `/root/.openclaw/workspace-vertical-a/research/keyword-strategy.json`
-- `/root/.openclaw/workspace-vertical-a/research/competitor-analysis.md`
-- `/root/.openclaw/workspace-vertical-a/research/industry-trends.md`
+- `/root/.openclaw-pm/workspace-vertical-a/research/keyword-strategy.json`
+- `/root/.openclaw-pm/workspace-vertical-a/research/competitor-analysis.md`
+- `/root/.openclaw-pm/workspace-vertical-a/research/industry-trends.md`
 
 **Example - keyword-strategy.json:**
 ```json
@@ -89,8 +89,8 @@ RETURN c.name, c.contentGaps
 ### 3.1 To Workspace
 
 **Files Created:**
-- `/root/.openclaw/workspace-vertical-a/drafts/YYYY-MM-DD-article-slug.md`
-- `/root/.openclaw/workspace-vertical-a/drafts/YYYY-MM-DD-landing-page-slug.md`
+- `/root/.openclaw-pm/workspace-vertical-a/drafts/YYYY-MM-DD-article-slug.md`
+- `/root/.openclaw-pm/workspace-vertical-a/drafts/YYYY-MM-DD-landing-page-slug.md`
 
 **Example - Blog Post:**
 ```markdown
@@ -535,7 +535,7 @@ ZERNIO_API_KEY=sk_xxx  # Replace with actual key in .env
 ZERNIO_BASE_URL=https://zernio.com/api/v1
 
 # OpenClaw
-OPENCLAW_WORKSPACE=/root/.openclaw/workspace-vertical-a
+OPENCLAW_WORKSPACE=/root/.openclaw-pm/workspace-vertical-a
 ```
 
 ### 6.2 Model Configuration

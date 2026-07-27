@@ -4,7 +4,7 @@
 **Role:** UI/UX Design + Code Generation  
 **Vertical:** ProQSmart (Vertical A)  
 **Primary Model:** `ollama-cloud/minimax-m3`  
-**Workspace:** `/root/.openclaw/workspace-designer-a/`
+**Workspace:** `/root/.openclaw-pm/workspace-designer-a/`
 
 ---
 
@@ -46,8 +46,8 @@ Generate production-ready React/Tailwind code for landing pages and blog posts b
 **Format:** Markdown files in workspace
 
 **Files:**
-- Blog posts: `/root/.openclaw/workspace-vertical-a/drafts/*.md`
-- Landing pages: `/root/.openclaw/workspace-vertical-a/drafts/*-landing.md`
+- Blog posts: `/root/.openclaw-pm/workspace-vertical-a/drafts/*.md`
+- Landing pages: `/root/.openclaw-pm/workspace-vertical-a/drafts/*-landing.md`
 
 **Content Structure:**
 ```markdown
@@ -89,13 +89,13 @@ RETURN p.componentStyle, p.layoutType
 ### 3.1 To Workspace
 
 **Files Created:**
-- `/root/.openclaw/workspace-designer-a/pages/homepage.tsx`
-- `/root/.openclaw/workspace-designer-a/pages/landing-ai-procurement.tsx`
-- `/root/.openclaw/workspace-designer-a/pages/blog-post.tsx`
-- `/root/.openclaw/workspace-designer-a/components/HeroSection.tsx`
-- `/root/.openclaw/workspace-designer-a/components/FeatureGrid.tsx`
-- `/root/.openclaw/workspace-designer-a/components/LeadForm.tsx`
-- `/root/.openclaw/workspace-designer-a/styles/globals.css`
+- `/root/.openclaw-pm/workspace-designer-a/pages/homepage.tsx`
+- `/root/.openclaw-pm/workspace-designer-a/pages/landing-ai-procurement.tsx`
+- `/root/.openclaw-pm/workspace-designer-a/pages/blog-post.tsx`
+- `/root/.openclaw-pm/workspace-designer-a/components/HeroSection.tsx`
+- `/root/.openclaw-pm/workspace-designer-a/components/FeatureGrid.tsx`
+- `/root/.openclaw-pm/workspace-designer-a/components/LeadForm.tsx`
+- `/root/.openclaw-pm/workspace-designer-a/styles/globals.css`
 
 **Example - Landing Page Component:**
 ```tsx
@@ -674,7 +674,7 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=your-password
 
 # OpenClaw
-OPENCLAW_WORKSPACE=/root/.openclaw/workspace-designer-a
+OPENCLAW_WORKSPACE=/root/.openclaw-pm/workspace-designer-a
 ```
 
 ### 6.2 Model Configuration

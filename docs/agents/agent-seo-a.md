@@ -4,7 +4,7 @@
 **Role:** Content SEO + Technical SEO  
 **Vertical:** ProQSmart (Vertical A)  
 **Primary Model:** `ollama-cloud/minimax-m3`  
-**Workspace:** `/root/.openclaw/workspace-seo-a/`
+**Workspace:** `/root/.openclaw-pm/workspace-seo-a/`
 
 ---
 
@@ -60,11 +60,11 @@ RETURN r.keyword, r.position, r.url
 ### 3.1 To Workspace
 
 **Files Created:**
-- `/root/.openclaw/workspace-seo-a/optimized/YYYY-MM-DD-article-slug.md`
-- `/root/.openclaw/workspace-seo-a/schema/YYYY-MM-DD-article-slug.jsonld`
-- `/root/.openclaw/workspace-seo-a/sitemap.xml`
-- `/root/.openclaw/workspace-seo-a/robots.txt`
-- `/root/.openclaw/workspace-seo-a/audit-reports/lighthouse-score.json`
+- `/root/.openclaw-pm/workspace-seo-a/optimized/YYYY-MM-DD-article-slug.md`
+- `/root/.openclaw-pm/workspace-seo-a/schema/YYYY-MM-DD-article-slug.jsonld`
+- `/root/.openclaw-pm/workspace-seo-a/sitemap.xml`
+- `/root/.openclaw-pm/workspace-seo-a/robots.txt`
+- `/root/.openclaw-pm/workspace-seo-a/audit-reports/lighthouse-score.json`
 
 **Example - Optimized Article:**
 ```markdown
@@ -355,7 +355,7 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=your-password
 
 # OpenClaw
-OPENCLAW_WORKSPACE=/root/.openclaw/workspace-seo-a
+OPENCLAW_WORKSPACE=/root/.openclaw-pm/workspace-seo-a
 ```
 
 ### 6.2 Model Configuration

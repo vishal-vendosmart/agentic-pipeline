@@ -15,7 +15,7 @@ from typing import Dict, List
 class ProjectManagerAgent:
     def __init__(self):
         self.linear_team_id = os.getenv('LINEAR_TEAM_ID', '6708e155-7999-4102-994c-88e6cdc1180f')
-        self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw')
+        self.workspace = os.getenv('OPENCLAW_WORKSPACE', '/root/.openclaw-pm')
         self.hermes_agents_dir = f'{self.workspace}/hermes-agents'
     
     def spawn_researcher(self, seed_keywords: List[str], vertical: str = 'A') -> Dict:

@@ -1,82 +1,68 @@
 # How to Start the PM Agent
 
-## ✅ OpenClaw is Ready
+## Architecture (fully isolated from Milo)
 
-The PM agent is **registered and ready** in OpenClaw.
+PM Agent runs in its **own OpenClaw profile** — completely separate from Milo.
+Same pattern as Milo: openclaw runtime state in the profile dir, **content lives in the project repo** via symlinks.
 
-## Method 1: Start PM Agent Session
+| | Milo (marketing) | PM Agent (pipeline) |
+|---|---|---|
+| State home | `/root/.openclaw` | `/root/.openclaw-pm` |
+| Content (symlinked) | `/opt/marketing-stack/dev/workspace` | `/root/dev/agentic-pipeline/workspace` |
+| Gateway port | 18789 | 18790 |
+| systemd unit | `openclaw-gateway.service` | `openclaw-pm-gateway.service` |
+| Telegram bot | `@Proqsmart_agent_bot` | `@ProQsmart_pm_bot` |
+| Agents | main, writer | pm-agent (only) |
+
+PM's symlinks: `/root/.openclaw-pm/{workspace, hermes-agents, workspace-vertical-a}` → `/root/dev/agentic-pipeline/`
+
+There is **no shared config, no shared bot, no routing between them**.
+
+## Method 1: Telegram (primary)
+
+DM **@ProQsmart_pm_bot** on Telegram. PM's gateway polls it directly.
+
+## Method 2: CLI chat via PM's gateway
 
 ```bash
-# Start a PM agent session
-opencode --agent pm
-
-# Or with a specific task
-opencode --agent pm "Research keywords for AI procurement software"
+openclaw --profile pm agents chat pm-agent
 ```
 
-## Method 2: Use CLI (Already Working)
+## Method 3: Pipeline CLI (direct, no gateway)
 
 ```bash
 cd /root/dev/agentic-pipeline
 
-# Quick research
-./pm-cli.sh research
-
-# Check status
-./pm-cli.sh status
-
-# List keywords
-./pm-cli.sh keywords
+./pm-cli.sh research   # Run keyword research pipeline
+./pm-cli.sh status     # Neo4j database status
+./pm-cli.sh keywords   # List keywords in Neo4j
 ```
 
-## What the PM Agent Can Do
-
-Once started, the PM agent will:
-
-1. **Create Linear projects** - Uses Linear MCP tools
-2. **Spawn Hermes agents** - Via `exec` tool
-   - Researcher: `/root/.openclaw/hermes-agents/researcher-vertical-a/agent.py`
-   - Writer: (TODO)
-   - Designer: (TODO)
-3. **Track progress** - Updates Linear tasks
-4. **Log work** - Updates IMPLEMENTATION.md and journal
-
-## Example Session
-
-```
-You: Research keywords for "AI procurement software"
-
-PM Agent:
-1. ✅ Creating Linear task MAR-254...
-2. 🚀 Spawning researcher agent...
-3. ⏳ Waiting for completion...
-4. ✅ Research complete: 12 keywords found
-5. 📝 Updating Linear task with results
-6. 💾 Keywords stored in Neo4j
-
-Done! Check Linear task MAR-254 for details.
-```
-
-## Verify It's Working
+## Service management
 
 ```bash
-# Check agent is registered
-python3 -c "import json; d=json.load(open('/root/.openclaw/openclaw.json')); print([a['id'] for a in d['agents']['list']])"
+systemctl status openclaw-pm-gateway   # status
+journalctl -u openclaw-pm-gateway -f   # logs
+systemctl restart openclaw-pm-gateway  # restart
+```
 
-# Should output: ['main', 'writer', 'pm']
+## Verify installation
+
+```bash
+openclaw --profile pm agents list
+# Should show ONLY: pm-agent (default)
+
+# Milo's side must show ONLY main + writer:
+openclaw agents list
 ```
 
 ## Configuration
 
-- **Agent ID:** `pm`
-- **Agent Name:** `pm-agent`
-- **Workspace:** `/root/.openclaw/workspace-pm`
-- **Model:** `ollama-cloud/minimax-m3`
-- **System Prompt:** `/root/.openclaw/agents/pm-agent/system.md`
-- **Config:** `/root/.openclaw/agents/pm-agent/config.json`
-
-## Next Steps
-
-1. Start PM agent: `opencode --agent pm`
-2. Give it a task: "Research 10 keywords for manufacturing AI"
-3. Watch it work in Linear and Neo4j
+- **Agent ID:** `pm-agent`
+- **Workspace:** `/root/dev/agentic-pipeline/workspace` (symlinked from `/root/.openclaw-pm/workspace`)
+- **Agent dir:** `/root/.openclaw-pm/agents/pm-agent/agent` (system.md, IDENTITY.md)
+- **Config:** `/root/.openclaw-pm/openclaw.json`
+- **Model:** `ollama-cloud/minimax-m3` (fallback: `deepseek-v4-pro`)
+- **Hermes agents:** `/root/dev/agentic-pipeline/hermes-agents/` (researcher-vertical-a installed; writer/designer/seo TODO)
+- **Research output:** `/root/dev/agentic-pipeline/workspace-vertical-a/`
+- **Data:** Neo4j container `agentic-pipeline-neo4j` (localhost:7474/:7687)
