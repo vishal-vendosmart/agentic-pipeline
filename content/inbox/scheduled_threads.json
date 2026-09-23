@@ -1,0 +1,33 @@
+[
+  {
+    "zernio_post_id": "6a2453a956503cef7e507f60",
+    "thread_length": 2,
+    "platforms": [
+      "twitter",
+      "linkedin"
+    ],
+    "account_ids": [
+      {
+        "_id": "6a0f049f520992756d92c57a",
+        "platform": "twitter",
+        "profileId": "6a0f048e3a1ee8a88d0f0ade",
+        "displayName": "Wefab",
+        "isActive": true,
+        "profilePicture": "https://pbs.twimg.com/profile_images/1944647914074353664/7So6EMfN_normal.png",
+        "username": "wefabdotAI"
+      },
+      {
+        "_id": "6a0ee81e520992756d91d5d6",
+        "platform": "linkedin",
+        "profileId": "6a0ee155dc6173179cd25315",
+        "displayName": "Vishal Patil ✨",
+        "isActive": true,
+        "profilePicture": "https://media.licdn.com/dms/image/v2/D5603AQHUcX4ELW4DeA/profile-displayphoto-scale_400_400/B56ZiXCtupHMAg-/0/1754880729495?e=1782345600&v=beta&t=29DmtXuTK5CbDrYJfq6ppeGMKoJUKg_AcRrRrX-GeNE",
+        "username": "Vishal Patil ✨"
+      }
+    ],
+    "created_at": "2026-06-06T17:06:49.080Z",
+    "source": "/tmp/test_thread.json",
+    "scheduled_for": null
+  }
+]

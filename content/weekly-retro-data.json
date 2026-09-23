@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-07-22T12:30:24.969Z",
+  "range": {
+    "from": "2026-07-15",
+    "to": "2026-07-22"
+  },
+  "zernio": {
+    "platforms": {
+      "linkedin": {
+        "impressions": 41128,
+        "likes": 89,
+        "comments": 16,
+        "shares": 5,
+        "reach": 29545,
+        "clicks": 19,
+        "posts": 50
+      }
+    },
+    "rawCount": 50,
+    "overview": {
+      "totalPosts": 58,
+      "publishedPosts": 58,
+      "scheduledPosts": 0,
+      "lastSync": "2026-07-22T12:25:03.457Z",
+      "dataStaleness": {
+        "staleAccountCount": 0,
+        "syncTriggered": false
+      }
+    }
+  },
+  "crm": {
+    "error": "no key"
+  },
+  "outbound": {
+    "count": 2,
+    "sample": [
+      {
+        "to": {
+          "name": null,
+          "addr": "vishal@proqsmart.com"
+        },
+        "subject": "Weekly Report 2026-07-22",
+        "date": "2026-07-22 18:00+05:30"
+      },
+      {
+        "to": {
+          "name": null,
+          "addr": "vishal@proqsmart.com"
+        },
+        "subject": "Weekly Report 2026-07-15",
+        "date": "2026-07-15 18:01+05:30"
+      }
+    ],
+    "error": null
+  },
+  "crons": {
+    "total": 31,
+    "ok": 31,
+    "error": 0,
+    "failedJobs": [],
+    "errorMsg": null,
+    "successRate": "100.0%"
+  }
+}
